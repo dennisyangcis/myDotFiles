@@ -167,7 +167,9 @@ Bundle 'Lokaltog/vim-easymotion'
 "Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 Bundle 'tpope/vim-fugitive'
 Bundle 'airblade/vim-gitgutter'
-Bundle 'msanders/snipmate.vim'
+"Bundle 'msanders/snipmate.vim'
+Plugin 'SirVer/ultisnips'	"install vim-snippets first, otherwise ultisnips installing will fail
+Plugin 'honza/vim-snippets'
 Bundle 'tpope/vim-surround'
 Bundle 'Valloric/YouCompleteMe'
 Bundle 'majutsushi/tagbar'
@@ -301,8 +303,13 @@ let g:NERDTreeIndicatorMapCustom = {
 			\ "Clean"     : "✔︎",
 			\ "Unknown"   : "?"
 			\ }
-
-
+" "ultisnips config
+let g:UltiSnipsEditSplit = "context"
+let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/snippets"
+let g:UltiSnipsExpandTrigger="<s-tab>"
+let g:UltiSnipsListSnippets = "<c-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 "" YCM
 let g:ycm_confirm_extra_conf = 0
