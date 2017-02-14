@@ -150,6 +150,9 @@ noremap <C-Up>    <C-W>k
 noremap <C-Left>  <C-W>h
 noremap <C-Right> <C-W>l
 
+nnoremap <A-,> <C-O>
+nnoremap <A-.> <C-I>
+
 " "cd" to change to open directory.
 let OpenDir=system("pwd")
 nmap <silent> <leader>cd :exe 'cd ' . OpenDir<cr>:pwd<cr>
