@@ -191,7 +191,7 @@ Plugin  'vim-airline/vim-airline'
 Bundle 'vim-airline/vim-airline-themes'
 Bundle 'jistr/vim-nerdtree-tabs'
 Bundle 'Xuyuanp/nerdtree-git-plugin'
-"Plugin 'fugalh/desert.vim'		"use twilighted instead in order to fit the color_coded
+Plugin 'fugalh/desert.vim'		"use twilighted instead in order to fit the color_coded
 " vim-scripts repos  （vim-scripts仓库里的，按下面格式填写）
 "Bundle 'L9'
 "Bundle 'FuzzyFinder'
@@ -214,6 +214,7 @@ Bundle 'gitv'
 " PLUGIN SETTINGS:
 "colorscheme desert
 colorscheme twilighted
+"colorscheme solarized
 
 " tagbar.vim
 let g:tagbar_left=1
@@ -223,11 +224,12 @@ let g:tarbar_compact=1					"omitting the short help at the top of the window and
 let g:tarbar_show_linenumbers=1			"show absolute line numbers
 " 执行vi 文件名，如果是c语言的程序，自动打开tagbar;vimdiff不自动打开tagbar
 if &diff == 0
-	"autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+	autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 endif
 nmap  <leader>tt :TagbarToggle<CR>
 
 "alrLine Config
+let g:airline_theme='light'
 if !exists('g:airline_symbols')
 	let g:airline_symbols = {}
 endif
@@ -240,7 +242,6 @@ let g:bufferline_echo=0
 set laststatus=2
 set t_Co=256
 "set fillchars+=stl:\ ,stlnc:\
-set guifont=Lucida_Console:h10
 let g:airline_mode_map = {
 	\ '__' : '-',
 	\ 'n'  : 'N',
@@ -386,9 +387,12 @@ let g:undotree_WindowLayout = 2
 source $VIMRUNTIME/ftplugin/man.vim
 
 " snipMate
-let g:snips_author="Yang Yinqi"
-let g:snips_email="yangyinqi1991@gmail.com"
-let g:snips_copyright="Yang Yinqi"
+"let g:snips_author="Yang Yinqi"
+"let g:snips_email="yangyinqi1991@gmail.com"
+"let g:snips_copyright="Yang Yinqi"
+"ino <c-j> <c-r>=TriggerSnippet()<cr>
+"snor <c-j> <esc>i<right><c-r>=TriggerSnippet()<cr>
+
 
 " Conque-Shell.vim
 " 水平分割出一个bash
@@ -473,7 +477,7 @@ nmap w. :vertical res -30<CR>
 "
 set noswapfile
 set guifont=DejaVuSansMono\ 11
-
+"set guifont=LucidaSansItalic\ 10
 """"""""""""""""""""""""""""""
 "实现vim和终端及gedit等之间复制、粘贴的设置
 """"""""""""""""""""""""""""""
