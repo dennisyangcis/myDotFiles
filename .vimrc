@@ -75,7 +75,7 @@ set   wildmenu
 set   wildmode=list:longest,full
 set wrap
 set t_Co=256
-
+set laststatus=2
 
 " AUTO COMMANDS:
 " auto expand tab to blanks
@@ -176,7 +176,7 @@ Plugin 'honza/vim-snippets'
 Bundle 'tpope/vim-surround'
 Bundle 'Valloric/YouCompleteMe'
 Bundle 'majutsushi/tagbar'
-Bundle 'weynhamz/vim-plugin-minibufexpl'
+"Bundle 'mkitt/tabline.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'tacahiroy/ctrlp-funky'
 Bundle 'mbbill/VimExplorer',{'on': 'VE'}
@@ -210,7 +210,6 @@ Bundle 'gitv'
 
 " vundle setup end
 
-
 " PLUGIN SETTINGS:
 "colorscheme desert
 colorscheme twilighted
@@ -230,31 +229,75 @@ nmap  <leader>tt :TagbarToggle<CR>
 
 "alrLine Config
 let g:airline_theme='light'
+let g:airline_skip_empty_sections = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_splits = 1
+let g:airline#extensions#tabline#switch_buffers_and_tabs = 0
+let g:airline#extensions#tabline#show_buffers = 1
+let g:Powerline_sybols = 'unicode'
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#fnamecollapse = 1
+let g:airline#extensions#tabline#fnametruncate = 0
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
+nmap <leader>9 <Plug>AirlineSelectTab9
+nmap <leader>- <Plug>AirlineSelectPrevTab
+nmap <leader>+ <Plug>AirlineSelectNextTab
+
+noremap <A-Left>  :bprevious<CR>
+noremap <A-Right> :bnext<CR>
+
 if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
+    let g:airline_symbols = {}
 endif
-let g:airline_symbols.space = "\ua0"
-let g:airline_exclude_filename = []
-let g:Powerline_symbols='fancy'
-let g:airline_powerline_fonts=0
-let Powerline_symbols='fancy'
-let g:bufferline_echo=0
-set laststatus=2
-set t_Co=256
-"set fillchars+=stl:\ ,stlnc:\
-let g:airline_mode_map = {
-	\ '__' : '-',
-	\ 'n'  : 'N',
-	\ 'i'  : 'I',
-	\ 'R'  : 'R',
-	\ 'c'  : 'C',
-	\ 'v'  : 'V',
-	\ 'V'  : 'V',
-	\ '' : 'V',
-	\ 's'  : 'S',
-	\ 'S'  : 'S',
-	\ '' : 'S',
-\ }
+let g:airline#extensions#tabline#buffer_idx_format = {
+	\ '0': '0 ',
+	\ '1': '1 ',
+	\ '2': '2 ',
+	\ '3': '3 ',
+	\ '4': '4 ',
+	\ '5': '5 ',
+	\ '6': '6 ',
+	\ '7': '7 ',
+	\ '8': '8 ',
+	\ '9': '9 '
+\}
+"enable/disable YCM integration >
+let g:airline#extensions#ycm#enabled = 1
+"set error count prefix >
+let g:airline#extensions#ycm#error_symbol = 'E:'
+"set warning count prefix >
+let g:airline#extensions#ycm#warning_symbol = 'W:'
+" tabline symbol
+let g:airline#extensions#tabline#left_sep = '▶'
+let g:airline#extensions#tabline#right_sep = '◀'
+" unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.crypt = '🔒'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.maxlinenr = '☰'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.spell = 'Ꞩ'
+let g:airline_symbols.notexists = '∄'
+let g:airline_symbols.whitespace = 'Ξ'
 
 "easy-motion config
 "<Leader>f{char} to move to {char}
@@ -342,26 +385,6 @@ let g:ycm_semantic_triggers =  {
   \   'erlang' : [':'],
   \ }
 
-" MiniBufExpl Config
-hi MBENormal               guifg=#808080 guibg=fg
-hi MBEChanged              guifg=#CD5907 guibg=fg
-hi MBEVisibleNormal        guifg=#5DC2D6 guibg=fg
-hi link MBEVisibleChanged Error
-hi MBEVisibleActiveNormal  guifg=#A6DB29 guibg=fg
-hi MBEVisibleActiveChanged guifg=#F1266F guibg=fg
-map <Leader>mbe :MBEOpen<cr>
-map <Leader>mbc :MBEClose<cr>
-map <Leader>mbt :MBEToggle<cr>
-map <A-Up>		:MBEOpenAll<cr>
-map <A-Down>	:MBECloseAll<cr>
-map <Leader>mta :MBEToggleAll<cr>
-nmap <A-Right>  :MBEbp<CR>
-nmap <A-Left>	:MBEbn<CR>
-nmap <Leader>d	:MBEbd<cr>	"remove the current buffer
-let g:miniBufExplMaxSize=3
-let g:miniBufExplCycleArround=1
-let g:miniBufExplHideWhenDiff=0
-
 " color_coded config
 " Disbale color_coded in diff mode
 if &diff
@@ -404,7 +427,7 @@ nnoremap <C-\>t :ConqueTermTab bash<CR><CR>
 " F9:将选中的文本，发送到Conque-Shell的交互程序中
 
 " vimdiff hot keys
-" if you know the buffer number, you can use hot key like ",2"
+" if you know the buffer number, you can use hot key like "'2"
 " (press comma first, then press two as quickly as possible) to
 " pull change from buffer number two.set up hot keys:
 map <silent><leader>1 :diffget 1<CR>:diffupdate<CR>
