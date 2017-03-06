@@ -167,7 +167,6 @@ Bundle 'gmarik/vundle'
 " My Bundles here:  /* 插件配置格式 */
 " original repos on github （Github网站上非vim-scripts仓库的插件，按下面格式填写）
 Bundle 'Lokaltog/vim-easymotion'
-"Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 Bundle 'tpope/vim-fugitive'
 Bundle 'airblade/vim-gitgutter'
 "Bundle 'msanders/snipmate.vim'
@@ -176,7 +175,6 @@ Plugin 'honza/vim-snippets'
 Bundle 'tpope/vim-surround'
 Bundle 'Valloric/YouCompleteMe'
 Bundle 'majutsushi/tagbar'
-"Bundle 'mkitt/tabline.vim'
 Bundle 'kien/ctrlp.vim'
 Bundle 'tacahiroy/ctrlp-funky'
 Bundle 'mbbill/VimExplorer',{'on': 'VE'}
@@ -223,7 +221,7 @@ let g:tarbar_compact=1					"omitting the short help at the top of the window and
 let g:tarbar_show_linenumbers=1			"show absolute line numbers
 " 执行vi 文件名，如果是c语言的程序，自动打开tagbar;vimdiff不自动打开tagbar
 if &diff == 0
-	autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+"	autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 endif
 nmap  <leader>tt :TagbarToggle<CR>
 
@@ -241,20 +239,10 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#fnamecollapse = 1
 let g:airline#extensions#tabline#fnametruncate = 0
 let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
-nmap <leader>1 <Plug>AirlineSelectTab1
-nmap <leader>2 <Plug>AirlineSelectTab2
-nmap <leader>3 <Plug>AirlineSelectTab3
-nmap <leader>4 <Plug>AirlineSelectTab4
-nmap <leader>5 <Plug>AirlineSelectTab5
-nmap <leader>6 <Plug>AirlineSelectTab6
-nmap <leader>7 <Plug>AirlineSelectTab7
-nmap <leader>8 <Plug>AirlineSelectTab8
-nmap <leader>9 <Plug>AirlineSelectTab9
-nmap <leader>- <Plug>AirlineSelectPrevTab
-nmap <leader>+ <Plug>AirlineSelectNextTab
 
 noremap <A-Left>  :bprevious<CR>
 noremap <A-Right> :bnext<CR>
+noremap <leader>d	:bdelete<CR>
 
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
@@ -313,15 +301,24 @@ map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
 
 " NERDTree.vim
+let g:NERDTreeSortHiddenFirst=1
+let g:NERDTreeQuitOnOpen=1
+let g:NERDTreeShowLineNumbers=1
+let g:NERDTreeMinimalUI=1
+let g:NERDTreeAutoDeleteBuffer=1
+let g:NERDTreeHijackNetrw=1
+let g:NERDTreeBookmarksFile=$HOME.'/.vim_cache/.NERDTreeBookmarks'
+let g:NERDTreeDirArrowExpandable="+"
+let g:NERDTreeDirArrowCollapsible="~"
+let g:NERDTreeRemoveDirCmd='rm -rf '
 let g:NERDTreeWinPos="right"
 let g:NERDTreeWinSize=30
-let g:NERDTreeShowLineNumbers=1
-let g:NERDTreeQuitOnOpen=1
 let g:NERDTreeDirArrows=0   "目录箭头: 1显示箭头  0传统+-|号
 let g:NERDTreeAutoCenter=1
 " 是否显示隐藏文件
 let NERDTreeShowHidden=1
-" 忽略以下文件的显示
+let g:nerdtree_tabs_open_on_gui_startup = 0
+"忽略以下文件的显示
 let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
 " 显示书签列表
 let NERDTreeShowBookmarks=1
@@ -500,7 +497,7 @@ nmap w. :vertical res -30<CR>
 "
 set noswapfile
 set guifont=DejaVuSansMono\ 11
-"set guifont=LucidaSansItalic\ 10
+"set guifont=LucidaSansMono\ 10
 """"""""""""""""""""""""""""""
 "实现vim和终端及gedit等之间复制、粘贴的设置
 """"""""""""""""""""""""""""""
@@ -531,8 +528,8 @@ nmap ci ggVG=
 " 复制全部
 nmap cy ggVGy
 
-" 启用每行超过80列的字符提示（背景变black）
-highlight MyGroup ctermbg=black guibg=black
+" 启用每行超过80列的字符提示（背景变brown)
+highlight MyGroup ctermbg=brown guibg=brown
 au BufWinEnter * let w:m2=matchadd('MyGroup', '\%>' . 80 . 'v.\+', -1)
 
 " Highlight unwanted spaces
