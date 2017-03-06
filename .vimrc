@@ -205,7 +205,7 @@ Bundle 'gitv'
 
 " non github repos   (非上面两种情况的，按下面格式填写)
 "Bundle 'git://git.wincent.com/command-t.git'
-
+call vundle#end()
 " vundle setup end
 
 " PLUGIN SETTINGS:
