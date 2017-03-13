@@ -7,6 +7,15 @@
 "	Description:
 "		This config for vim is mainly designed for C/C++/Python program coding
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" system env
+let g:windows = 0
+if(has("win32") || has("win64") || has("win95") || has("win16"))
+	let g:windows = 1
+endif
+let g:linux=0
+if(has("unix") && g:windows != 1)
+	let g:linux=1
+endif
 
 " To use VIM settings, out of VI compatible mode.
 set nocompatible
@@ -301,23 +310,14 @@ map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
 
 " NERDTree.vim
-let g:NERDTreeSortHiddenFirst=1
 let g:NERDTreeQuitOnOpen=1
 let g:NERDTreeShowLineNumbers=1
-let g:NERDTreeMinimalUI=1
-let g:NERDTreeAutoDeleteBuffer=1
-let g:NERDTreeHijackNetrw=1
-let g:NERDTreeBookmarksFile=$HOME.'/.vim_cache/.NERDTreeBookmarks'
-let g:NERDTreeDirArrowExpandable="+"
-let g:NERDTreeDirArrowCollapsible="~"
-let g:NERDTreeRemoveDirCmd='rm -rf '
 let g:NERDTreeWinPos="right"
 let g:NERDTreeWinSize=30
 let g:NERDTreeDirArrows=0   "目录箭头: 1显示箭头  0传统+-|号
 let g:NERDTreeAutoCenter=1
 " 是否显示隐藏文件
 let NERDTreeShowHidden=1
-let g:nerdtree_tabs_open_on_gui_startup = 0
 "忽略以下文件的显示
 let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
 " 显示书签列表
@@ -539,7 +539,7 @@ highlight ExtraWhitespace ctermbg=red guibg=red
 " Highlight variable under cursor in Vim
 let g:HlUnderCursor=0
 let g:no_highlight_group_for_current_word=["Statement", "Comment", "Type", "PreProc"]
-function s:HighlightWordUnderCursor()
+function HighlightWordUnderCursor()
 	let l:syntaxgroup = synIDattr(synIDtrans(synID(line("."), stridx(getline("."), expand('<cword>')) + 1, 1)), "name")
 
 	if (index(g:no_highlight_group_for_current_word, l:syntaxgroup) == -1)
@@ -550,6 +550,6 @@ function s:HighlightWordUnderCursor()
 		exe 'match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/'
 	endif
 endfunction
-autocmd CursorMoved * call s:HighlightWordUnderCursor()
+map <leader>\ :call HighlightWordUnderCursor()<CR>
 " define a shortcut key for enabling/disabling highlighting:
 nnoremap  <C-\><F3> :exe "let g:HlUnderCursor=exists(\"g:HlUnderCursor\")?g:HlUnderCursor*-1+1:1"<CR>
