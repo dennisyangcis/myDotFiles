@@ -167,11 +167,11 @@ let OpenDir=system("pwd")
 nmap <silent> <leader>cd :exe 'cd ' . OpenDir<cr>:pwd<cr>
 
 " vundle.vim 插件管理器
-set rtp+=~/.vim/bundle/vundle/
+set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
 filetype plugin indent on     " required!
-Bundle 'gmarik/vundle'
+Bundle 'VundleVim/Vundle.vim'
 
 " My Bundles here:  /* 插件配置格式 */
 " original repos on github （Github网站上非vim-scripts仓库的插件，按下面格式填写）
@@ -190,7 +190,7 @@ Bundle 'mbbill/VimExplorer',{'on': 'VE'}
 Bundle 'will133/vim-dirdiff'
 Bundle 'mbbill/undotree'
 Plugin 'rdnetto/YCM-Generator', { 'branch': 'stable'}
-"Plugin 'jeaye/color_coded'		"semantic highlighting with vim for c/cpp/oc
+Plugin 'jeaye/color_coded'		"semantic highlighting with vim for c/cpp/oc
 Bundle 'tpope/vim-unimpaired'
 "running shell on vim
 Bundle 'oplatek/Conque-Shell'
@@ -199,7 +199,7 @@ Bundle 'vim-airline/vim-airline-themes'
 Bundle 'jistr/vim-nerdtree-tabs'
 Bundle 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'fugalh/desert.vim'		"use twilighted instead in order to fit the color_coded
-Bundle 'twilight256.vim'
+"Bundle 'twilight256.vim'
 " vim-scripts repos  （vim-scripts仓库里的，按下面格式填写）
 "Bundle 'L9'
 "Bundle 'FuzzyFinder'
@@ -219,8 +219,8 @@ call vundle#end()
 " vundle setup end
 
 " PLUGIN SETTINGS:
-colorscheme desert
-"colorscheme twilight256
+"colorscheme desert
+colorscheme twilighted
 "colorscheme solarized
 
 " tagbar.vim
@@ -489,10 +489,10 @@ nmap <leader>zz <C-w>o
 ",zz  关闭光标所在窗口之外的其他所有窗口
 
 " window-resize
-nmap w= :res +15<CR>
-nmap w- :res -15<CR>
-nmap w, :vertical res +30<CR>
-nmap w. :vertical res -30<CR>
+nmap w= :res +5<CR>
+nmap w- :res -5<CR>
+nmap w, :vertical res +10<CR>
+nmap w. :vertical res -10<CR>
 
 """"""""""""""""""""""""""""""""""""
 "
