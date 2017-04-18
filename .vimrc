@@ -190,7 +190,7 @@ Bundle 'mbbill/VimExplorer',{'on': 'VE'}
 Bundle 'will133/vim-dirdiff'
 Bundle 'mbbill/undotree'
 Plugin 'rdnetto/YCM-Generator', { 'branch': 'stable'}
-Plugin 'jeaye/color_coded'		"semantic highlighting with vim for c/cpp/oc
+"Plugin 'jeaye/color_coded'		"semantic highlighting with vim for c/cpp/oc
 Bundle 'tpope/vim-unimpaired'
 "running shell on vim
 Bundle 'oplatek/Conque-Shell'
@@ -219,8 +219,7 @@ call vundle#end()
 " vundle setup end
 
 " PLUGIN SETTINGS:
-"colorscheme desert
-colorscheme twilighted
+colorscheme desert
 "colorscheme solarized
 
 " tagbar.vim
