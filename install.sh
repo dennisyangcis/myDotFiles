@@ -1,16 +1,16 @@
 #!/bin/bash
 
 #search nessesary tools installed.
-exist=0
-git --version > /dev/null && exist=1 || exist=0
-if test "x$exist" = "x0"; then
+git_exist=0
+git --version > /dev/null && git_exist=1 || gitexist=0
+if test "x$git_exist" = "x0"; then
 	echo "error: git not installed"
 	exit
 fi
 
-exist=0
-vim --version > /dev/null && exist=1 || exist=0
-if test "x$exist" = "x0"; then
+vim_exist=0
+vim --version > /dev/null && vim_exist=1 || vim_exist=0
+if test "x$vim_exist" = "x0"; then
 	echo "error: vim not installed"
 	exit
 fi
