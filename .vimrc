@@ -529,8 +529,8 @@ nmap ci ggVG=
 nmap cy ggVGy
 
 " 启用每行超过80列的字符提示（背景变brown)
-highlight MyGroup ctermbg=brown guibg=brown
-au BufWinEnter * let w:m2=matchadd('MyGroup', '\%>' . 80 . 'v.\+', -1)
+"highlight MyGroup ctermbg=brown guibg=brown
+"au BufWinEnter * let w:m2=matchadd('MyGroup', '\%>' . 80 . 'v.\+', -1)
 
 " Highlight unwanted spaces
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -552,4 +552,4 @@ function HighlightWordUnderCursor()
 endfunction
 map <leader>\ :call HighlightWordUnderCursor()<CR>
 " define a shortcut key for enabling/disabling highlighting:
-nnoremap  <C-\><F3> :exe "let g:HlUnderCursor=exists(\"g:HlUnderCursor\")?g:HlUnderCursor*-1+1:1"<CR>
+nnoremap  <C-\> :exe "let g:HlUnderCursor=exists(\"g:HlUnderCursor\")?g:HlUnderCursor*-1+1:1"<CR>
