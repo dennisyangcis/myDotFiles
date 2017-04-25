@@ -39,4 +39,17 @@ fi
 
 vim +BundleInstall +qall
 
+#do some extra environment checking
+ctags_exist=0
+ctags --version > /dev/null && ctags_exist=1 || ctags_exist=0
+if test "x$ctags_exist" = "x0"; then
+	echo "warning: ctags/exuberant ctags not installed, you should install it
+	for tagbar"
+fi
+
+echo "You may compile 'YouCompleteMe' by yourself in order to use the code
+completition function"
+echo "See https://github.com/Valloric/YouCompleteMe/blob/master/README.md for
+detail and installation steps"
+
 cd $old_dir
