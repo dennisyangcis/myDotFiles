@@ -199,7 +199,7 @@ Bundle 'vim-airline/vim-airline-themes'
 Bundle 'jistr/vim-nerdtree-tabs'
 Bundle 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'fugalh/desert.vim'		"use twilighted instead in order to fit the color_coded
-"Bundle 'twilight256.vim'
+Bundle 'morhetz/gruvbox'
 " vim-scripts repos  （vim-scripts仓库里的，按下面格式填写）
 "Bundle 'L9'
 "Bundle 'FuzzyFinder'
@@ -219,8 +219,7 @@ call vundle#end()
 " vundle setup end
 
 " PLUGIN SETTINGS:
-colorscheme desert
-"colorscheme solarized
+colorscheme gruvbox
 
 " tagbar.vim
 let g:tagbar_left=1
@@ -235,7 +234,7 @@ endif
 nmap  <leader>tt :TagbarToggle<CR>
 
 "alrLine Config
-let g:airline_theme='light'
+let g:airline_theme='gruvbox'
 let g:airline_skip_empty_sections = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_splits = 1
@@ -498,7 +497,8 @@ nmap w. :vertical res -10<CR>
 set noswapfile
 set guifont=DejaVuSansMono\ 11
 "set guifont=LucidaSansMono\ 10
-""""""""""""""""""""""""""""""
+"set guifont=Monaco\ 10
+"""""""""""""""""""""""""""""
 "实现vim和终端及gedit等之间复制、粘贴的设置
 """"""""""""""""""""""""""""""
 " 让VIM和ubuntu(X Window)共享一个粘贴板
