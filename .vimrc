@@ -313,6 +313,7 @@ let g:NERDTreeQuitOnOpen=1
 let g:NERDTreeShowLineNumbers=1
 let g:NERDTreeWinPos="right"
 let g:NERDTreeWinSize=30
+let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows=0   "目录箭头: 1显示箭头  0传统+-|号
 let g:NERDTreeAutoCenter=1
 " 是否显示隐藏文件
