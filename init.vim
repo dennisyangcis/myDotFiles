@@ -1,65 +1,43 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" .vimrc - Vim configuration file.
+"   init.vim - Configuration file for neovim.
 "
-"   Created: 2017-01-21
-"	Author : Tommy Yang
-"	Email	: yangyinqi1991@gmail.com
-"	Description:
-"		This config for vim is mainly designed for C/C++/Python program coding
+"   Created : 2017-01-21
+"   Author  : Tommy Yang
+"   Email   : yangyinqi1991@gmail.com
+"   Description :
+"       This config for vim is mainly designed for C/C++/Python program coding
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" system env
-let g:windows = 0
-if(has("win32") || has("win64") || has("win95") || has("win16"))
-	let g:windows = 1
-endif
-let g:linux=0
-if(has("unix") && g:windows != 1)
-	let g:linux=1
-endif
 
-" To use VIM settings, out of VI compatible mode.
-set nocompatible
-" filetype plugin indent on
-filetype on
-syntax enable
-syntax on
-" Other settings.
-set   autoindent
-set   autoread
+" settings.
 set   autowrite
 set   background=dark
-set   backspace=indent,eol,start
 set   nobackup
 set   cindent
 set   cinoptions=:0
 set   completeopt=longest,menuone
-set   noexpandtab
 set   fileencodings=utf-8,gb2312,gbk,gb18030
 set   fileformat=unix
 set   foldenable
 set   foldmethod=manual
 set   foldlevel=128
-set   guioptions-=T
-set   guioptions-=m
-set   guioptions-=r
-set   guioptions-=l		"remove toolbars on gvim
 set   helpheight=10
 set   helplang=cn
 set   hidden
 set   history=100
-set   hlsearch
 set   ignorecase
-set   incsearch
 set   mouse=v
 set   number
 set   pumheight=10
 set   ruler
 set   scrolloff=2
-set   shiftwidth=4
 set   showcmd
 set   smartindent
 set   smartcase
+" expand 1 tab to 4 spaces
+set   expandtab
 set   tabstop=4
+set   shiftwidth=4
+
 set   termencoding=utf-8
 set   textwidth=80
 set   whichwrap=h,l
@@ -80,15 +58,10 @@ set wildignore+=*/build/*,*/build-*/*
 set wildignore+=*/bin/*,*/gen/*,*/lib/*,*/libs/*,*/obj/*
 set wildignore+=*/_repo/*
 
-set   wildmenu
-set   wildmode=list:longest,full
+set wildmode=list:longest,full
 set wrap
 set t_Co=256
-set laststatus=2
 
-" AUTO COMMANDS:
-" auto expand tab to blanks
-"autocmd FileType c,cpp set expandtab
 " Restore the last quit position when open file.
 autocmd BufReadPost *
     \ if line("'\"") > 0 && line("'\"") <= line("$") |
@@ -102,7 +75,7 @@ func SetTitle()
 		call setline(1,"\#!/bin/bash")
 		call append(line("."), "")
     elseif expand("%:e") == 'py'
-        call setline(1,"#!/usr/bin/env python")
+        call setline(1,"#!/usr/bin/env python3")
         call append(line("."),"# coding=utf-8")
 		call append(line(".")+1, "")
 "    elseif expand("%:e") == 'cpp'
@@ -166,60 +139,47 @@ nnoremap <A-.> <C-I>
 let OpenDir=system("pwd")
 nmap <silent> <leader>cd :exe 'cd ' . OpenDir<cr>:pwd<cr>
 
-" vundle.vim 插件管理器
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+" Specify a directory for plugins
+call plug#begin('~/.vim/plugged')
 
-filetype plugin indent on     " required!
-Bundle 'VundleVim/Vundle.vim'
+" original repos on github
+Plug 'Lokaltog/vim-easymotion'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+Plug 'tpope/vim-surround'
+Plug 'majutsushi/tagbar'
+Plug 'kien/ctrlp.vim'
+Plug 'tacahiroy/ctrlp-funky'
+Plug 'will133/vim-dirdiff'
+Plug 'mbbill/undotree'
+Plug 'tpope/vim-unimpaired'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
-" My Bundles here:  /* 插件配置格式 */
-" original repos on github （Github网站上非vim-scripts仓库的插件，按下面格式填写）
-Bundle 'Lokaltog/vim-easymotion'
-Bundle 'tpope/vim-fugitive'
-Bundle 'airblade/vim-gitgutter'
-"Bundle 'msanders/snipmate.vim'
-Plugin 'SirVer/ultisnips'	"install vim-snippets first, otherwise ultisnips installing will fail
-Plugin 'honza/vim-snippets'
-Bundle 'tpope/vim-surround'
-Bundle 'Valloric/YouCompleteMe'
-Bundle 'majutsushi/tagbar'
-Bundle 'kien/ctrlp.vim'
-Bundle 'tacahiroy/ctrlp-funky'
-Bundle 'mbbill/VimExplorer',{'on': 'VE'}
-Bundle 'will133/vim-dirdiff'
-Bundle 'mbbill/undotree'
-Plugin 'rdnetto/YCM-Generator', { 'branch': 'stable'}
-"Plugin 'jeaye/color_coded'		"semantic highlighting with vim for c/cpp/oc
-Bundle 'tpope/vim-unimpaired'
 "running shell on vim
-Bundle 'oplatek/Conque-Shell'
-Plugin  'vim-airline/vim-airline'
-Bundle 'vim-airline/vim-airline-themes'
-Bundle 'jistr/vim-nerdtree-tabs'
-Bundle 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'fugalh/desert.vim'		"use twilighted instead in order to fit the color_coded
-Bundle 'morhetz/gruvbox'
-" vim-scripts repos  （vim-scripts仓库里的，按下面格式填写）
-"Bundle 'L9'
-"Bundle 'FuzzyFinder'
-Bundle 'genutils'
-Bundle 'lookupfile'
-Bundle 'The-NERD-tree'
-Bundle 'The-NERD-Commenter'
-Bundle 'mru.vim'
-Bundle 'ZoomWin'
-Bundle 'a.vim'
+Plug 'oplatek/Conque-Shell'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'jistr/vim-nerdtree-tabs'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'fugalh/desert.vim'
+Plug 'morhetz/gruvbox'
 
-Bundle 'gitv'
-
-" non github repos   (非上面两种情况的，按下面格式填写)
-"Bundle 'git://git.wincent.com/command-t.git'
-call vundle#end()
-" vundle setup end
+" vim-scripts repos
+Plug 'vim-scripts/The-NERD-tree'
+Plug 'vim-scripts/The-NERD-Commenter'
+Plug 'vim-scripts/mru.vim'
+Plug 'vim-scripts/ZoomWin'
+Plug 'vim-scripts/a.vim'
+Plug 'vim-syntastic/syntastic'
+call plug#end()
+" setup end
 
 " PLUGIN SETTINGS:
 colorscheme gruvbox
+
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
 
 " tagbar.vim
 let g:tagbar_left=1
@@ -267,12 +227,7 @@ let g:airline#extensions#tabline#buffer_idx_format = {
 	\ '8': '8 ',
 	\ '9': '9 '
 \}
-"enable/disable YCM integration >
-let g:airline#extensions#ycm#enabled = 1
-"set error count prefix >
-let g:airline#extensions#ycm#error_symbol = 'E:'
-"set warning count prefix >
-let g:airline#extensions#ycm#warning_symbol = 'W:'
+
 " tabline symbol
 let g:airline#extensions#tabline#left_sep = '▶'
 let g:airline#extensions#tabline#right_sep = '◀'
@@ -355,43 +310,6 @@ let g:UltiSnipsListSnippets = "<c-tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
-"" YCM
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_error_symbol = '>>'
-let g:ycm_warning_symbol = '>*'
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_complete_in_comments = 1
-let g:ycm_complete_in_strings = 1
-"let g:ycm_auto_trigger = 0	"prevent unexpected completion when typing codes
-let g:ycm_python_binary_path = '/usr/bin/python3'
-let g:ycm_global_ycm_extra_conf = ''
-nnoremap <leader>ju :YcmCompleter GoToDeclaration<CR>
-nnoremap <leader>ji :YcmCompleter GoToDefinition<CR>
-nnoremap <leader>jo :YcmCompleter GoToInclude<CR>
-let g:ycm_semantic_triggers =  {
-  \   'c' : ['->', '.'],
-  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-  \             're!\[.*\]\s'],
-  \   'ocaml' : ['.', '#'],
-  \   'cpp,objcpp' : ['->', '.', '::'],
-  \   'perl' : ['->'],
-  \   'php' : ['->', '::'],
-  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
-  \   'ruby' : ['.', '::'],
-  \   'lua' : ['.', ':'],
-  \   'erlang' : [':'],
-  \ }
-
-" color_coded config
-" Disbale color_coded in diff mode
-if &diff
-	let g:color_coded_enbaled = 0
-else
-	let g:color_coded_enbaled = 1
-endif
-let g:color_coded_filetypes = ['c', 'cpp', 'h', 'hpp', 'cc']	"controls the filetypes which color_coded will try to compile
-
-
 " LookupFile setting
 let g:LookupFile_TagExpr='"./tags.o.fn"'
 let g:LookupFile_MinPatLength=2
@@ -405,14 +323,6 @@ let g:undotree_WindowLayout = 2
 
 " Man.vim
 source $VIMRUNTIME/ftplugin/man.vim
-
-" snipMate
-"let g:snips_author="Yang Yinqi"
-"let g:snips_email="yangyinqi1991@gmail.com"
-"let g:snips_copyright="Yang Yinqi"
-"ino <c-j> <c-r>=TriggerSnippet()<cr>
-"snor <c-j> <esc>i<right><c-r>=TriggerSnippet()<cr>
-
 
 " Conque-Shell.vim
 " 水平分割出一个bash
@@ -467,7 +377,7 @@ nmap  <F3> :exec 'MRU' expand('%:p:h')<CR>
 "nmap  <F4> :NERDTreeToggle<cr>
 nmap  <F4> :NERDTreeTabsToggle<cr>
 nmap  <C-\><F4> :NERDTreeTabsFind<CR>
-nmap  <leader><F4> :silent! VE .<cr>
+"nmap  <leader><F4> :silent! VE .<cr>
 
 nmap  <F5> <Plug>LookupFile<cr>
 nmap  <C-F5> :UndotreeToggle<cr>
@@ -496,14 +406,9 @@ nmap w. :vertical res -10<CR>
 """"""""""""""""""""""""""""""""""""
 "
 set noswapfile
-set guifont=DejaVuSansMono\ 11
-"set guifont=LucidaSansMono\ 10
-"set guifont=Monaco\ 10
-"""""""""""""""""""""""""""""
-"实现vim和终端及gedit等之间复制、粘贴的设置
-""""""""""""""""""""""""""""""
-" 让VIM和ubuntu(X Window)共享一个粘贴板
-set clipboard=unnamedplus " 设置vim使用"+寄存器(粘贴板)，"+寄存器是代表ubuntu的粘贴板。
+
+" share system clipboard
+set clipboard=unnamedplus " When possible use + register for copy-paste
 
 "cursor line
 set linespace=2
