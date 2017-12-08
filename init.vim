@@ -114,7 +114,7 @@ map \ :call ShowFuncName()<CR>
 
 " SHORTCUT SETTINGS:
 " Set mapleader
-let mapleader="'"
+let mapleader=","
 
 " Space to command mode.
 nnoremap <space> :
@@ -164,9 +164,10 @@ Plug 'jistr/vim-nerdtree-tabs'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'fugalh/desert.vim'
 Plug 'morhetz/gruvbox'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'junegunn/vim-easy-align'
 
 " vim-scripts repos
-Plug 'vim-scripts/The-NERD-tree'
 Plug 'vim-scripts/The-NERD-Commenter'
 Plug 'vim-scripts/mru.vim'
 Plug 'vim-scripts/ZoomWin'
@@ -177,6 +178,12 @@ call plug#end()
 
 " PLUGIN SETTINGS:
 colorscheme gruvbox
+
+" vim-easy-align
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
@@ -310,14 +317,6 @@ let g:UltiSnipsListSnippets = "<c-tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
-" LookupFile setting
-let g:LookupFile_TagExpr='"./tags.o.fn"'
-let g:LookupFile_MinPatLength=2
-let g:LookupFile_PreserveLastPattern=0
-let g:LookupFile_PreservePatternHistory=1
-let g:LookupFile_AlwaysAcceptFirst=1
-let g:LookupFile_AllowNewFiles=0
-
 " undotree.vim
 let g:undotree_WindowLayout = 2
 
@@ -374,12 +373,11 @@ nnoremap <silent> <C-A> :ZoomToggle<CR>
 
 " F2 ~ F12 按键映射
 nmap  <F3> :exec 'MRU' expand('%:p:h')<CR>
-"nmap  <F4> :NERDTreeToggle<cr>
-nmap  <F4> :NERDTreeTabsToggle<cr>
+nmap  <F4> :NERDTreeToggle<cr>
+" nmap  <F4> :NERDTreeTabsToggle<cr>
 nmap  <C-\><F4> :NERDTreeTabsFind<CR>
 "nmap  <leader><F4> :silent! VE .<cr>
 
-nmap  <F5> <Plug>LookupFile<cr>
 nmap  <C-F5> :UndotreeToggle<cr>
 "nmap  <leader><F5> :execute 'vimgrep //gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'
 nmap  <F6> :execute 'vimgrep /'.expand('<cword>').'/gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'<CR>:botright cwindow<CR>
