@@ -155,22 +155,23 @@ Plug 'will133/vim-dirdiff'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-unimpaired'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'zchee/deoplete-jedi'
+Plug 'zchee/deoplete-clang'
+Plug 'tenfyzhong/CompleteParameter.vim'
 
-"running shell on vim
-Plug 'oplatek/Conque-Shell'
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/vimshell.vim'
+Plug 'Shougo/neossh.vim'
+
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'jistr/vim-nerdtree-tabs'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'fugalh/desert.vim'
 Plug 'morhetz/gruvbox'
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'junegunn/vim-easy-align'
 
 " vim-scripts repos
 Plug 'vim-scripts/The-NERD-Commenter'
 Plug 'vim-scripts/mru.vim'
-Plug 'vim-scripts/ZoomWin'
+" Plug 'vim-scripts/ZoomWin'
 Plug 'vim-scripts/a.vim'
 Plug 'vim-syntastic/syntastic'
 call plug#end()
@@ -270,45 +271,6 @@ nmap <Leader>L <Plug>(easymotion-overwin-line)
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
 
-" NERDTree.vim
-let g:NERDTreeQuitOnOpen=1
-let g:NERDTreeShowLineNumbers=1
-let g:NERDTreeWinPos="right"
-let g:NERDTreeWinSize=30
-let g:NERDTreeMinimalUI=1
-let g:NERDTreeDirArrows=0   "目录箭头: 1显示箭头  0传统+-|号
-let g:NERDTreeAutoCenter=1
-" 是否显示隐藏文件
-let NERDTreeShowHidden=1
-"忽略以下文件的显示
-let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
-" 显示书签列表
-let NERDTreeShowBookmarks=1
-"autocmd vimenter * NERDTree "打开vim时自动打开NERDTree
-" NERDTree是最后一个窗口，它自动关闭
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-
-"  vim-nerdtree-tabs.vim
-" 在终端启动vim时，共享NERDTree
-let g:nerdtree_tabs_open_on_console_startup=0
-" always focus file window after startup
-let g:nerdtree_tabs_smart_startup_focus=2
-"let g:nerdtree_tabs_focus_on_files=1
-"let g:nerdtree_tabs_autofind=1
-
-" nerdtree-git-plugin.vim
-let g:NERDTreeShowGitStatus = 0
-let g:NERDTreeIndicatorMapCustom = {
-			\ "Modified"  : "✹",
-			\ "Staged"    : "✚",
-			\ "Untracked" : "✭",
-			\ "Renamed"   : "➜",
-			\ "Unmerged"  : "═",
-			\ "Deleted"   : "✖",
-			\ "Dirty"     : "✗",
-			\ "Clean"     : "✔︎",
-			\ "Unknown"   : "?"
-			\ }
 " "ultisnips config
 let g:UltiSnipsEditSplit = "context"
 let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/snippets"
@@ -322,15 +284,6 @@ let g:undotree_WindowLayout = 2
 
 " Man.vim
 source $VIMRUNTIME/ftplugin/man.vim
-
-" Conque-Shell.vim
-" 水平分割出一个bash
-nnoremap <C-\>b :ConqueTermSplit bash<CR><CR>
-" 垂直分割出bash
-nnoremap <C-\>vb :ConqueTermVSplit bash<CR><CR>
-" 在tab中打开一个bash
-nnoremap <C-\>t :ConqueTermTab bash<CR><CR>
-" F9:将选中的文本，发送到Conque-Shell的交互程序中
 
 " vimdiff hot keys
 " if you know the buffer number, you can use hot key like "'2"
@@ -355,28 +308,9 @@ function! RunShell(Msg, Shell)
 	echon 'done'
 endfunction
 
-" ZoomWinPlugin.vim
-" Zoom / Restore window.
-function! s:ZoomToggle() abort
-    if exists('t:zoomed') && t:zoomed
-        execute t:zoom_winrestcmd
-        let t:zoomed = 0
-    else
-        let t:zoom_winrestcmd = winrestcmd()
-        resize
-        vertical resize
-        let t:zoomed = 1
-    endif
-endfunction
-command! ZoomToggle call s:ZoomToggle()
-nnoremap <silent> <C-A> :ZoomToggle<CR>
-
 " F2 ~ F12 按键映射
 nmap  <F3> :exec 'MRU' expand('%:p:h')<CR>
-nmap  <F4> :NERDTreeToggle<cr>
-" nmap  <F4> :NERDTreeTabsToggle<cr>
-nmap  <C-\><F4> :NERDTreeTabsFind<CR>
-"nmap  <leader><F4> :silent! VE .<cr>
+
 
 nmap  <C-F5> :UndotreeToggle<cr>
 "nmap  <leader><F5> :execute 'vimgrep //gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'
