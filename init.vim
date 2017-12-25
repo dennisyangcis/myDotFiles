@@ -160,11 +160,11 @@ Plug 'zchee/deoplete-clang'
 Plug 'tenfyzhong/CompleteParameter.vim'
 
 Plug 'Shougo/unite.vim'
+Plug 'Shougo/vimfiler.vim'
 Plug 'Shougo/vimshell.vim'
 Plug 'Shougo/neossh.vim'
 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
 Plug 'morhetz/gruvbox'
 Plug 'junegunn/vim-easy-align'
 
@@ -189,6 +189,43 @@ nmap ga <Plug>(EasyAlign)
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
 
+" vimfiler config
+let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_restore_alternate_file = 1
+" call vimfiler#set_execute_file('txt', 'notepad')
+" call vimfiler#set_execute_file('c', ['gvim', 'notepad'])
+
+" Enable file operation commands.
+" Edit file by tabedit.
+call vimfiler#custom#profile('default', 'context', {
+      \ 'edit_action' : 'tabopen',
+      \ 'toggle' : 1,
+      \ 'auto_expand' : 1,
+      \ 'parent': 0,                                                                                                                                                                                           
+      \ 'status' : 1,                                                                                                                                                                                         
+      \ 'safe' : 0,                                                                                                                                                                                            
+      \ 'split' : 1,
+      \ 'hidden': 1,
+      \ 'no_quit' : 1,
+      \ 'force_hide' : 0,
+      \ 'direction' : 'rightbelow',
+      \ 'winwidth' : 40,
+      \ 'winminwidth' : 30,
+      \ })
+
+" Like Textmate icons.
+let g:vimfiler_tree_leaf_icon = ' '
+let g:vimfiler_tree_opened_icon = '▾'
+let g:vimfiler_tree_closed_icon = '▸'
+let g:vimfiler_file_icon = '-'
+let g:vimfiler_marked_file_icon = '*'
+let g:vimfiler_readonly_file_icon = '√'
+let g:vimfiler_ignore_filter = ['matcher_ignore_wildignore']
+
+" Use trashbox.
+" Windows only and require latest vimproc.
+"let g:unite_kind_file_use_trashbox = 1
+
 " tagbar.vim
 let g:tagbar_left=1
 let g:tagbar_width=30                    "窗口宽度的设置
@@ -199,64 +236,10 @@ let g:tarbar_show_linenumbers=1			"show absolute line numbers
 if &diff == 0
 "	autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 endif
-nmap  <leader>tt :TagbarToggle<CR>
-
-"alrLine Config
-let g:airline_theme='gruvbox'
-let g:airline_skip_empty_sections = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_splits = 1
-let g:airline#extensions#tabline#switch_buffers_and_tabs = 0
-let g:airline#extensions#tabline#show_buffers = 1
-let g:Powerline_sybols = 'unicode'
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline#extensions#tabline#buffer_nr_format = '%s:'
-let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline#extensions#tabline#fnamecollapse = 1
-let g:airline#extensions#tabline#fnametruncate = 0
-let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 
 noremap <A-Left>  :bprevious<CR>
 noremap <A-Right> :bnext<CR>
 noremap <leader>d	:bdelete<CR>
-
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-let g:airline#extensions#tabline#buffer_idx_format = {
-	\ '0': '0 ',
-	\ '1': '1 ',
-	\ '2': '2 ',
-	\ '3': '3 ',
-	\ '4': '4 ',
-	\ '5': '5 ',
-	\ '6': '6 ',
-	\ '7': '7 ',
-	\ '8': '8 ',
-	\ '9': '9 '
-\}
-
-" tabline symbol
-let g:airline#extensions#tabline#left_sep = '▶'
-let g:airline#extensions#tabline#right_sep = '◀'
-" unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.crypt = '🔒'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.maxlinenr = '☰'
-let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
-let g:airline_symbols.spell = 'Ꞩ'
-let g:airline_symbols.notexists = '∄'
-let g:airline_symbols.whitespace = 'Ξ'
 
 "easy-motion config
 "<Leader>f{char} to move to {char}
@@ -309,9 +292,9 @@ function! RunShell(Msg, Shell)
 endfunction
 
 " F2 ~ F12 按键映射
-nmap  <F3> :exec 'MRU' expand('%:p:h')<CR>
-
-
+nmap  <F4> :exec 'MRU' expand('%:p:h')<CR>
+nnoremap <silent> <F2> :TagbarToggle<CR>
+nnoremap <F3> :silent VimFiler<CR>
 nmap  <C-F5> :UndotreeToggle<cr>
 "nmap  <leader><F5> :execute 'vimgrep //gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'
 nmap  <F6> :execute 'vimgrep /'.expand('<cword>').'/gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'<CR>:botright cwindow<CR>
