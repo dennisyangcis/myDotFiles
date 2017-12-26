@@ -149,8 +149,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'majutsushi/tagbar'
-Plug 'kien/ctrlp.vim'
-Plug 'tacahiroy/ctrlp-funky'
 Plug 'will133/vim-dirdiff'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-unimpaired'
@@ -165,13 +163,12 @@ Plug 'Shougo/vimshell.vim'
 Plug 'Shougo/neossh.vim'
 
 Plug 'itchyny/lightline.vim'
+Plug 'taohex/lightline-buffer'
 Plug 'morhetz/gruvbox'
 Plug 'junegunn/vim-easy-align'
 
 " vim-scripts repos
 Plug 'vim-scripts/The-NERD-Commenter'
-Plug 'vim-scripts/mru.vim'
-" Plug 'vim-scripts/ZoomWin'
 Plug 'vim-scripts/a.vim'
 Plug 'vim-syntastic/syntastic'
 call plug#end()
@@ -189,12 +186,127 @@ nmap ga <Plug>(EasyAlign)
 " Use deoplete.
 let g:deoplete#enable_at_startup = 1
 
+" lightline config
+let g:lightline = {
+      \ 'colorscheme': 'jellybeans',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'readonly': 'LightlineReadonly',
+      \   'gitbranch': 'fugitive#head',
+      \   'fileformat': 'LightlineFileformat',
+      \   'filetype': 'LightlineFiletype',
+      \   'filename': 'LightlineFilename',
+      \   'bufferinfo': 'lightline#buffer#bufferinfo',
+      \   'mode': 'LightlineMode',
+      \ },
+      \ 'tabline': {
+      \   'left': [ [ 'bufferinfo' ],
+      \             [ 'separator' ],
+      \             [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
+      \   'right': [ [ 'close' ], ],
+      \ },
+      \ 'component_expand': {
+      \   'buffercurrent': 'lightline#buffer#buffercurrent',
+      \   'bufferbefore': 'lightline#buffer#bufferbefore',
+      \   'bufferafter': 'lightline#buffer#bufferafter',
+      \ },
+      \ 'component_type': {
+      \   'buffercurrent': 'tabsel',
+      \   'bufferbefore': 'raw',
+      \   'bufferafter': 'raw',
+      \ },
+      \ 'component': {
+      \   'separator': '',
+      \ },
+      \ }
+
+function! LightlineReadonly()
+  return &readonly && &filetype !=# 'help' ? 'RO' : ''
+endfunction
+
+function! LightlineMode()
+  return expand('%:t') ==# '__Tagbar__' ? 'Tagbar':
+        \ &filetype ==# 'unite' ? 'Unite' :
+        \ &filetype ==# 'vimfiler' ? 'VimFiler' :
+        \ &filetype ==# 'vimshell' ? 'VimShell' :
+        \ lightline#mode()
+endfunction
+
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightlineFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? ' +' : ''
+  return filename . modified
+endfunction
+
+" lightline buff config
+set showtabline=2
+" remap arrow keys
+nnoremap <M-Left> :bprev<CR>
+nnoremap <M-Right> :bnext<CR>
+
+" lightline-buffer ui settings
+" replace these symbols with ascii characters if your environment does not support unicode
+"let g:lightline_buffer_logo = ' '
+let g:lightline_buffer_readonly_icon = ''
+let g:lightline_buffer_modified_icon = '✭'
+let g:lightline_buffer_git_icon = ' '
+let g:lightline_buffer_ellipsis_icon = '..'
+let g:lightline_buffer_expand_left_icon = '◀ '
+let g:lightline_buffer_expand_right_icon = ' ▶'
+let g:lightline_buffer_active_buffer_left_icon = ''
+let g:lightline_buffer_active_buffer_right_icon = ''
+let g:lightline_buffer_separator_icon = '  '
+
+" lightline-buffer function settings
+let g:lightline_buffer_show_bufnr = 1
+let g:lightline_buffer_rotate = 0
+let g:lightline_buffer_fname_mod = ':t'
+let g:lightline_buffer_excludes = ['vimfiler']
+
+let g:lightline_buffer_maxflen = 30
+let g:lightline_buffer_maxfextlen = 3
+let g:lightline_buffer_minflen = 16
+let g:lightline_buffer_minfextlen = 3
+let g:lightline_buffer_reservelen = 20
+
 " vimfiler config
+
+function! OpenVimfiler() abort
+    if bufnr('vimfiler') == -1
+        silent VimFiler
+        if exists(':AirlineRefresh')
+            AirlineRefresh
+        endif
+        wincmd p
+        if &filetype !=# 'startify'
+            IndentLinesToggle
+            IndentLinesToggle
+        endif
+        wincmd p
+    else
+        silent VimFiler
+        doautocmd WinEnter
+        if exists(':AirlineRefresh')
+            AirlineRefresh
+        endif
+    endif
+endfunction
+
 let g:vimfiler_as_default_explorer = 1
 let g:vimfiler_restore_alternate_file = 1
 " call vimfiler#set_execute_file('txt', 'notepad')
 " call vimfiler#set_execute_file('c', ['gvim', 'notepad'])
-
 " Enable file operation commands.
 " Edit file by tabedit.
 call vimfiler#custom#profile('default', 'context', {
@@ -212,7 +324,6 @@ call vimfiler#custom#profile('default', 'context', {
       \ 'winwidth' : 40,
       \ 'winminwidth' : 30,
       \ })
-
 " Like Textmate icons.
 let g:vimfiler_tree_leaf_icon = ' '
 let g:vimfiler_tree_opened_icon = '▾'
@@ -221,7 +332,6 @@ let g:vimfiler_file_icon = '-'
 let g:vimfiler_marked_file_icon = '*'
 let g:vimfiler_readonly_file_icon = '√'
 let g:vimfiler_ignore_filter = ['matcher_ignore_wildignore']
-
 " Use trashbox.
 " Windows only and require latest vimproc.
 "let g:unite_kind_file_use_trashbox = 1
@@ -292,10 +402,9 @@ function! RunShell(Msg, Shell)
 endfunction
 
 " F2 ~ F12 按键映射
-nmap  <F4> :exec 'MRU' expand('%:p:h')<CR>
 nnoremap <silent> <F2> :TagbarToggle<CR>
-nnoremap <F3> :silent VimFiler<CR>
-nmap  <C-F5> :UndotreeToggle<cr>
+nnoremap <F3> :call OpenVimfiler()<CR>
+nnoremap <F5> :UndotreeToggle<CR>
 "nmap  <leader><F5> :execute 'vimgrep //gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'
 nmap  <F6> :execute 'vimgrep /'.expand('<cword>').'/gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'<CR>:botright cwindow<CR>
 nmap  <C-F6> :vimgrep /<C-R>=expand("<cword>")<cr>/ **/*.c **/*.h<cr><C-o>:botright cwindow<cr>
