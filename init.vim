@@ -57,6 +57,10 @@ set wildignore+=*/_build/*,*/build/*
 set wildignore+=*/build/*,*/build-*/*
 set wildignore+=*/bin/*,*/gen/*,*/lib/*,*/libs/*,*/obj/*
 set wildignore+=*/_repo/*
+" c/cpp
+set wildignore+=*/.so/*,*/.o/*
+" py
+set wildignore+=*/.pyc/*,*/.pyo/*
 
 set wildmode=list:longest,full
 set wrap
@@ -148,22 +152,33 @@ Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
-Plug 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar',{ 'on': 'TagbarToggle' }
 Plug 'will133/vim-dirdiff'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-unimpaired'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'zchee/deoplete-jedi'
-Plug 'zchee/deoplete-clang'
+
+function! BuildYCM(info)
+if a:info.status == 'installed' || a:info.force
+  !./install.py --clang-completer
+endif
+endfunction
+Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM'), 'for': ['c', 'cpp', 'h', 'hpp', 'python'] }
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+Plug 'jeaye/color_coded', {'for': ['c', 'cpp', 'h', 'hpp']}
 Plug 'tenfyzhong/CompleteParameter.vim'
 
 Plug 'Shougo/unite.vim'
-Plug 'Shougo/vimfiler.vim'
 Plug 'Shougo/vimshell.vim'
 Plug 'Shougo/neossh.vim'
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 
-Plug 'itchyny/lightline.vim'
-Plug 'taohex/lightline-buffer'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeTabsToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeTabsToggle' }
+Plug 'jistr/vim-nerdtree-tabs', { 'on': 'NERDTreeTabsToggle' }
+
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
 Plug 'morhetz/gruvbox'
 Plug 'junegunn/vim-easy-align'
 
@@ -183,158 +198,135 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
-" Use deoplete.
-let g:deoplete#enable_at_startup = 1
+"" YCM
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_error_symbol = '>>'
+let g:ycm_warning_symbol = '>*'
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_complete_in_comments = 1
+let g:ycm_complete_in_strings = 1
+"let g:ycm_auto_trigger = 0	"prevent unexpected completion when typing codes
+let g:ycm_python_binary_path = '/usr/bin/python3'
+let g:ycm_global_ycm_extra_conf = ''
+nnoremap <leader>ju :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>ji :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>jo :YcmCompleter GoToInclude<CR>
+let g:ycm_semantic_triggers =  {
+  \   'c' : ['->', '.'],
+  \   'cpp' : ['->', '.', '::'],
+  \   'java,javascript,python' : ['.'],
+  \ }
 
-" lightline config
-let g:lightline = {
-      \ 'colorscheme': 'jellybeans',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'readonly': 'LightlineReadonly',
-      \   'gitbranch': 'fugitive#head',
-      \   'fileformat': 'LightlineFileformat',
-      \   'filetype': 'LightlineFiletype',
-      \   'filename': 'LightlineFilename',
-      \   'bufferinfo': 'lightline#buffer#bufferinfo',
-      \   'mode': 'LightlineMode',
-      \ },
-      \ 'tabline': {
-      \   'left': [ [ 'bufferinfo' ],
-      \             [ 'separator' ],
-      \             [ 'bufferbefore', 'buffercurrent', 'bufferafter' ], ],
-      \   'right': [ [ 'close' ], ],
-      \ },
-      \ 'component_expand': {
-      \   'buffercurrent': 'lightline#buffer#buffercurrent',
-      \   'bufferbefore': 'lightline#buffer#bufferbefore',
-      \   'bufferafter': 'lightline#buffer#bufferafter',
-      \ },
-      \ 'component_type': {
-      \   'buffercurrent': 'tabsel',
-      \   'bufferbefore': 'raw',
-      \   'bufferafter': 'raw',
-      \ },
-      \ 'component': {
-      \   'separator': '',
-      \ },
-      \ }
+" CompleteParameter
+inoremap <silent><expr> ( complete_parameter#pre_complete("()")
+smap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+imap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+smap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+imap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
 
-function! LightlineReadonly()
-  return &readonly && &filetype !=# 'help' ? 'RO' : ''
-endfunction
+"alrLine Config
+let g:airline_theme='gruvbox'
+let g:airline_skip_empty_sections = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_splits = 1
+let g:airline#extensions#tabline#switch_buffers_and_tabs = 0
+let g:airline#extensions#tabline#show_buffers = 1
+let g:Powerline_sybols = 'unicode'
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#fnamecollapse = 1
+let g:airline#extensions#tabline#fnametruncate = 0
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline#extensions#fugitiveline#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#branch#empty_message = ''
+let g:airline#extensions#branch#vcs_priority = ["git", "mercurial"]
 
-function! LightlineMode()
-  return expand('%:t') ==# '__Tagbar__' ? 'Tagbar':
-        \ &filetype ==# 'unite' ? 'Unite' :
-        \ &filetype ==# 'vimfiler' ? 'VimFiler' :
-        \ &filetype ==# 'vimshell' ? 'VimShell' :
-        \ lightline#mode()
-endfunction
+"enable/disable YCM integration >
+let g:airline#extensions#ycm#enabled = 1
+"set error count prefix >
+let g:airline#extensions#ycm#error_symbol = 'E:'
+"set warning count prefix >
+let g:airline#extensions#ycm#warning_symbol = 'W:'
 
-function! LightlineFileformat()
-  return winwidth(0) > 70 ? &fileformat : ''
-endfunction
+noremap <A-Left>  :bprevious<CR>
+noremap <A-Right> :bnext<CR>
+noremap <A-Up>    :bdelete<CR>
 
-function! LightlineFiletype()
-  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
-endfunction
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+let g:airline#extensions#tabline#buffer_idx_format = {
+	\ '0': '0 ',
+	\ '1': '1 ',
+	\ '2': '2 ',
+	\ '3': '3 ',
+	\ '4': '4 ',
+	\ '5': '5 ',
+	\ '6': '6 ',
+	\ '7': '7 ',
+	\ '8': '8 ',
+	\ '9': '9 '
+\}
+" tabline symbol
+let g:airline#extensions#tabline#left_sep = '▶'
+let g:airline#extensions#tabline#right_sep = '◀'
+" unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_left_sep = '▶'
+let g:airline_right_sep = '«'
+let g:airline_right_sep = '◀'
+let g:airline_symbols.crypt = '🔒'
+let g:airline_symbols.linenr = '␊'
+let g:airline_symbols.linenr = '␤'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.maxlinenr = '☰'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.branch = '⎇'
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.spell = 'Ꞩ'
+let g:airline_symbols.notexists = '∄'
+let g:airline_symbols.whitespace = 'Ξ'
 
-function! LightlineFilename()
-  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
-  let modified = &modified ? ' +' : ''
-  return filename . modified
-endfunction
 
-" lightline buff config
-set showtabline=2
-" remap arrow keys
-nnoremap <M-Left> :bprev<CR>
-nnoremap <M-Right> :bnext<CR>
+" NERDTree.vim
+let g:NERDTreeQuitOnOpen=1
+let g:NERDTreeShowLineNumbers=1
+let g:NERDTreeWinPos="right"
+let g:NERDTreeWinSize=30
+let g:NERDTreeMinimalUI=1
+let g:NERDTreeDirArrows=1   "dir arrow: 1-arrow  0-'+-|'
+let g:NERDTreeAutoCenter=1
+let NERDTreeShowHidden=1
+let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
+let NERDTreeRespectWildIgnore = 1
+let NERDTreeShowBookmarks=1
+" close automatically when it is the last window
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-" lightline-buffer ui settings
-" replace these symbols with ascii characters if your environment does not support unicode
-"let g:lightline_buffer_logo = ' '
-let g:lightline_buffer_readonly_icon = ''
-let g:lightline_buffer_modified_icon = '✭'
-let g:lightline_buffer_git_icon = ' '
-let g:lightline_buffer_ellipsis_icon = '..'
-let g:lightline_buffer_expand_left_icon = '◀ '
-let g:lightline_buffer_expand_right_icon = ' ▶'
-let g:lightline_buffer_active_buffer_left_icon = ''
-let g:lightline_buffer_active_buffer_right_icon = ''
-let g:lightline_buffer_separator_icon = '  '
+"  vim-nerdtree-tabs.vim
+let g:nerdtree_tabs_open_on_console_startup=0
+" always focus file window after startup
+let g:nerdtree_tabs_smart_startup_focus=2
+"let g:nerdtree_tabs_focus_on_files=1
+"let g:nerdtree_tabs_autofind=1
 
-" lightline-buffer function settings
-let g:lightline_buffer_show_bufnr = 1
-let g:lightline_buffer_rotate = 0
-let g:lightline_buffer_fname_mod = ':t'
-let g:lightline_buffer_excludes = ['vimfiler']
-
-let g:lightline_buffer_maxflen = 30
-let g:lightline_buffer_maxfextlen = 3
-let g:lightline_buffer_minflen = 16
-let g:lightline_buffer_minfextlen = 3
-let g:lightline_buffer_reservelen = 20
-
-" vimfiler config
-
-function! OpenVimfiler() abort
-    if bufnr('vimfiler') == -1
-        silent VimFiler
-        if exists(':AirlineRefresh')
-            AirlineRefresh
-        endif
-        wincmd p
-        if &filetype !=# 'startify'
-            IndentLinesToggle
-            IndentLinesToggle
-        endif
-        wincmd p
-    else
-        silent VimFiler
-        doautocmd WinEnter
-        if exists(':AirlineRefresh')
-            AirlineRefresh
-        endif
-    endif
-endfunction
-
-let g:vimfiler_as_default_explorer = 1
-let g:vimfiler_restore_alternate_file = 1
-" call vimfiler#set_execute_file('txt', 'notepad')
-" call vimfiler#set_execute_file('c', ['gvim', 'notepad'])
-" Enable file operation commands.
-" Edit file by tabedit.
-call vimfiler#custom#profile('default', 'context', {
-      \ 'edit_action' : 'tabopen',
-      \ 'toggle' : 1,
-      \ 'auto_expand' : 1,
-      \ 'parent': 0,                                                                                                                                                                                           
-      \ 'status' : 1,                                                                                                                                                                                         
-      \ 'safe' : 0,                                                                                                                                                                                            
-      \ 'split' : 1,
-      \ 'hidden': 1,
-      \ 'no_quit' : 1,
-      \ 'force_hide' : 0,
-      \ 'direction' : 'rightbelow',
-      \ 'winwidth' : 40,
-      \ 'winminwidth' : 30,
-      \ })
-" Like Textmate icons.
-let g:vimfiler_tree_leaf_icon = ' '
-let g:vimfiler_tree_opened_icon = '▾'
-let g:vimfiler_tree_closed_icon = '▸'
-let g:vimfiler_file_icon = '-'
-let g:vimfiler_marked_file_icon = '*'
-let g:vimfiler_readonly_file_icon = '√'
-let g:vimfiler_ignore_filter = ['matcher_ignore_wildignore']
-" Use trashbox.
-" Windows only and require latest vimproc.
-"let g:unite_kind_file_use_trashbox = 1
+" nerdtree-git-plugin.vim
+let g:NERDTreeShowGitStatus = 1
+let g:NERDTreeIndicatorMapCustom = {
+			\ "Modified"  : "✹",
+			\ "Staged"    : "✚",
+			\ "Untracked" : "✭",
+			\ "Renamed"   : "➜",
+			\ "Unmerged"  : "═",
+			\ "Deleted"   : "✖",
+			\ "Dirty"     : "✗",
+			\ "Clean"     : "✔︎",
+			\ "Unknown"   : "?"
+			\ }
 
 " tagbar.vim
 let g:tagbar_left=1
@@ -344,12 +336,8 @@ let g:tarbar_compact=1					"omitting the short help at the top of the window and
 let g:tarbar_show_linenumbers=1			"show absolute line numbers
 " 执行vi 文件名，如果是c语言的程序，自动打开tagbar;vimdiff不自动打开tagbar
 if &diff == 0
-"	autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
+	" autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 endif
-
-noremap <A-Left>  :bprevious<CR>
-noremap <A-Right> :bnext<CR>
-noremap <leader>d	:bdelete<CR>
 
 "easy-motion config
 "<Leader>f{char} to move to {char}
@@ -403,7 +391,7 @@ endfunction
 
 " F2 ~ F12 按键映射
 nnoremap <silent> <F2> :TagbarToggle<CR>
-nnoremap <F3> :call OpenVimfiler()<CR>
+nnoremap <F3> :NERDTreeTabsToggle<CR>
 nnoremap <F5> :UndotreeToggle<CR>
 "nmap  <leader><F5> :execute 'vimgrep //gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'
 nmap  <F6> :execute 'vimgrep /'.expand('<cword>').'/gj '.expand('%:p:h').'/*.c '.expand('%:p:h').'/*.h'<CR>:botright cwindow<CR>
@@ -437,8 +425,6 @@ set clipboard=unnamedplus " When possible use + register for copy-paste
 "cursor line
 set linespace=2
 set cursorline
-highlight CursorLineNr gui=reverse guibg=NONE guifg=NONE
-highlight CursorLineNr cterm=reverse ctermbg=NONE ctermfg=NONE
 
 """"""""""""""""""""""""""""""
 " 编辑文件相关配置
@@ -463,7 +449,7 @@ nmap cy ggVGy
 "au BufWinEnter * let w:m2=matchadd('MyGroup', '\%>' . 80 . 'v.\+', -1)
 
 " Highlight unwanted spaces
-highlight ExtraWhitespace ctermbg=red guibg=red
+" highlight ExtraWhitespace ctermbg=red guibg=red
 "autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/
 
 " Highlight variable under cursor in Vim
