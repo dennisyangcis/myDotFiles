@@ -2,7 +2,13 @@
 let g:spacevim_enable_debug = 1
 let g:spacevim_realtime_leader_guide = 1
 call SpaceVim#layers#load('incsearch')
-call SpaceVim#layers#load('lang#c')
+call SpaceVim#layers#load('lang#c',
+        \ {
+        \ 'enable_libclang' : 1,
+        \ 'libclang_path' : '/usr/lib/libclang.so',
+        \ }
+        \ )
+
 call SpaceVim#layers#disable('lang#elixir')
 call SpaceVim#layers#disable('lang#go')
 call SpaceVim#layers#disable('lang#haskell')
@@ -17,8 +23,14 @@ call SpaceVim#layers#disable('lang#swig')
 call SpaceVim#layers#disable('lang#tmux')
 call SpaceVim#layers#load('lang#vim')
 call SpaceVim#layers#load('lang#xml')
-call SpaceVim#layers#load('shell')
 call SpaceVim#layers#load('tools#screensaver')
+call SpaceVim#layers#load('shell',
+        \ {
+        \ 'default_position' : 'bottom',
+        \ 'default_height' : 30,
+        \ 'default_shell' : 'terminal',
+        \ }
+        \ )
 
 call SpaceVim#layers#load('ui')
 call SpaceVim#layers#load('autocomplete')
@@ -48,4 +60,3 @@ let g:clang2_placeholder_prev = ''
 
 let g:spacevim_default_indent = 4
 let g:spacevim_relativenumber = 0
-let g:chromatica#libclang_path = "/usr/lib/llvm-4.0/lib"
