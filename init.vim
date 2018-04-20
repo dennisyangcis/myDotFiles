@@ -28,6 +28,11 @@ call SpaceVim#layers#load('debug')
 " languages
 call SpaceVim#layers#load('lang#c',
         \ {
+        \ 'clang_executable' : '/usr/bin/clang',
+        \ 'clang_std' : {
+                \ "c": "c11",
+                \ "cpp": "c++1z",
+                \ },
         \ 'libclang_path' : '/usr/lib/libclang.so',
         \ }
         \ )
