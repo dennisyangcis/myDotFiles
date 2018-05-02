@@ -1,66 +1,566 @@
-"=============================================================================
-" dark_powered.vim --- Dark powered mode of SpaceVim
-" Copyright (c) 2016-2017 Wang Shidong & Contributors
-" Author: Wang Shidong < wsdjeg at 163.com >
-" URL: https://spacevim.org
-" License: GPLv3
-"=============================================================================
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"   init.vim - Configuration file for neovim.
+"
+"   Created : 2017-01-21
+"   Author  : Tommy Yang
+"   Email   : yangyinqi1991@gmail.com
+"   Description :
+"       This config for nvim is mainly designed for C/C++/Python program coding,
+"       and also for java,js,markdown,html.
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+" settings.
+set   autowrite
+set   background=dark
+set   nobackup
+set   cindent
+set   cinoptions=:0
+set   fileencodings=utf-8,gb2312,gbk,gb18030
+set   fileformat=unix
+set   foldenable
+set   foldmethod=manual
+set   foldlevel=128
+set   helpheight=10
+set   helplang=cn
+set   hidden
+set   ignorecase
+set   mouse=v
+set   number
+set   pumheight=10
+set   ruler
+set   scrolloff=2
+set   showcmd
+set   smartindent
+set   smartcase
+" expand 1 tab to 4 spaces
+set   expandtab
+set   tabstop=4
+set   shiftwidth=4
 
-" SpaceVim Options: {{{
-let g:spacevim_enable_debug = 1
-let g:spacevim_realtime_leader_guide = 1
-let g:spacevim_enable_tabline_filetype_icon = 1
-let g:spacevim_enable_statusline_display_mode = 0
-let g:spacevim_enable_os_fileformat_icon = 1
-let g:spacevim_buffer_index_type = 1
-let g:spacevim_enable_vimfiler_welcome = 1
-let g:spacevim_default_indent = 4
-let g:spacevim_relativenumber = 0
-let g:spacevim_enable_debug = 1
-" }}}
+set   termencoding=utf-8
+set   textwidth=80
+set   wrap
+set   whichwrap=<,>,[,]
 
-" SpaceVim Layers: {{{
+" global ignore
+set wildignore=
+"common
+set wildignore+=*/.svn/*,*/.git/*,*/.hg/*
+set wildignore+=tags,.vim_tags
+set wildignore+=.tags
+set wildignore+=*.swp
+" tmp dir
+set wildignore+=*/_cache/*,*/.cache/*
+set wildignore+=*/_tmp/*,*/.tmp/*
+" build dir
+set wildignore+=*/_release/*,*/.release/*
+set wildignore+=*/_build/*,*/build/*
+set wildignore+=*/build/*,*/build-*/*
+set wildignore+=*/bin/*,*/gen/*,*/lib/*,*/libs/*,*/obj/*
+set wildignore+=*/_repo/*
+" c/cpp
+set wildignore+=*/.so/*,*/.o/*,*/.obj/*,*/.class/*
+" py
+set wildignore+=*/.pyc/*,*/.pyo/*
+
+set wildmode=list:longest,full
+set wrap
+set t_Co=256
+
+" create file settings
+autocmd BufNewFile *.cpp,*.cc,*.c,*.hpp,*.h,*.sh,*.py exec ":call SetTitle()"
+func SetTitle()
+	if expand("%:e") == 'sh'
+		call setline(1,"\#!/bin/bash")
+		call append(line("."), "")
+"    elseif expand("%:e") == 'py'
+"       call setline(1,"#!/usr/bin/env python3")
+"       call append(line("."),"# coding=utf-8")
+"		call append(line(".")+1, "")
+"    elseif expand("%:e") == 'cpp'
+"		call setline(1,"#include <iostream>")
+"		call append(line("."), "")
+"    elseif expand("%:e") == 'cc'
+"		call setline(1,"#include <iostream>")
+"		call append(line("."), "")
+"    elseif expand("%:e") == 'c'
+"		call setline(1,"#include <stdio.h>")
+"		call append(line("."), "")
+    elseif expand("%:e") == 'h'
+		call setline(1, "#ifndef _".toupper(expand("%:r"))."_H")
+		call setline(2, "#define _".toupper(expand("%:r"))."_H")
+		call setline(3, "#endif")
+    elseif expand("%:e") == 'hpp'
+		call setline(1, "#ifndef _".toupper(expand("%:r"))."_H")
+		call setline(2, "#define _".toupper(expand("%:r"))."_H")
+		call setline(3, "#endif")
+	endif
+endfunc
+autocmd BufNewFile * normal G
+
+" some function definition:
+
+" show function names in command line
+fun! ShowFuncName()
+	let lnum = line(".")
+	let col = col(".")
+	echohl ModeMsg
+	echo getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bW'))
+	echohl None
+	call search("\\%" . lnum . "l" . "\\%" . col . "c")
+endfun
+map \ :call ShowFuncName()<CR>
+
+" SHORTCUT SETTINGS:
+" Set mapleader
+let mapleader="'"
+
+" Space to command mode.
+nnoremap <space> :
+vnoremap <space> :
+
+" Switching between buffers.
+" switch to normal
+inoremap jk <Esc>
+noremap <C-j>  <C-W>j
+noremap <C-k>  <C-W>k
+noremap <C-h>  <C-W>h
+noremap <C-l>  <C-W>l
+
+" "cd" to change to open directory.
+let OpenDir=system("pwd")
+nmap <silent> <leader>cd :exe 'cd ' . OpenDir<cr>:pwd<cr>
+
+" start vim-plug
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" Specify a directory for plugins
+call plug#begin('~/.vim/plugged')
+
+Plug 'junegunn/vim-easy-align'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'tpope/vim-fugitive'
+Plug 'mhinz/vim-signify'
+Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
+Plug 'tpope/vim-surround'
+Plug 'will133/vim-dirdiff'
+Plug 'mbbill/undotree'
+Plug 'tpope/vim-unimpaired'
+Plug 'jsfaint/gen_tags.vim'
+Plug 'haya14busa/incsearch.vim'
+Plug 'haya14busa/incsearch-fuzzy.vim'
+
+" code completion
+" for deoplete
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
+endif
+" for c
+Plug 'zchee/deoplete-clang'
+Plug 'arakashic/chromatica.nvim'
+Plug 'Shougo/neoinclude.vim'
+" for js
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+" for python
+Plug 'zchee/deoplete-jedi'
+Plug 'heavenshell/vim-pydocstring'
+Plug 'Vimjas/vim-python-pep8-indent'
+Plug 'tell-k/vim-autoflake'
+" for viml
+Plug 'Shougo/neco-vim'
+
+Plug 'Shougo/neosnippet.vim'
+Plug 'Shougo/neosnippet-snippets'
+" terminal in neovim
+Plug 'Shougo/vimshell.vim'
+Plug 'Shougo/deol.nvim'
+" others lang
+Plug 'plasticboy/vim-markdown'
 " utils
-call SpaceVim#layers#load('autocomplete')
-call SpaceVim#layers#load('checkers')
-call SpaceVim#layers#load('debug')
-" languages
-call SpaceVim#layers#load('lang#c',
-        \ {
-        \ 'clang_executable' : '/usr/bin/clang',
-        \ 'clang_std' : {
-                \ "c": "c11",
-                \ "cpp": "c++1z",
-                \ },
-        \ 'libclang_path' : '/usr/lib/libclang.so',
-        \ }
-        \ )
-call SpaceVim#layers#load('lang#java')
-call SpaceVim#layers#load('lang#javascript')
-call SpaceVim#layers#load('lang#python')
-call SpaceVim#layers#load('lang#vim')
-call SpaceVim#layers#load('lang#markdown')
-call SpaceVim#layers#load('lang#html')
-" tools
-call SpaceVim#layers#load('VersionControl')
-call SpaceVim#layers#load('git')
-call SpaceVim#layers#load('github')
-call SpaceVim#layers#load('shell',
-        \ {
-        \ 'default_position' : 'bottom',
-        \ 'default_height' : 30,
-        \ 'default_shell' : 'terminal',
-        \ }
-        \ )
-call SpaceVim#layers#load('ui')
-call SpaceVim#layers#load('colorscheme')
-call SpaceVim#layers#load('tags')
-call SpaceVim#layers#load('cscope')
-call SpaceVim#layers#load('unite')
-" }}}
+Plug 'tenfyzhong/CompleteParameter.vim'
+Plug 'w0rp/ale'
+Plug 'Shougo/denite.nvim'
+" nerdtree
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeTabsToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeTabsToggle' }
+Plug 'jistr/vim-nerdtree-tabs', { 'on': 'NERDTreeTabsToggle' }
+" UI
+Plug 'Yggdroot/indentLine'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'majutsushi/tagbar',{ 'on': 'TagbarToggle' }
+Plug 'tenfyzhong/tagbar-makefile.vim'
+Plug 'lvht/tagbar-markdown'
+Plug 't9md/vim-choosewin'
+Plug 'joshdick/onedark.vim'
+Plug 'mhinz/vim-startify'
+Plug 'ryanoasis/vim-devicons' " file icons
 
-" Spacevim Custom Settings:{{{
-let g:spacevim_colorscheme = 'one'
-let g:spacevim_colorscheme_bg = 'dark'
-" }}}
+Plug 'scrooloose/nerdcommenter'
+Plug 'skywind3000/asyncrun.vim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'plytophogy/vim-virtualenv'
+
+call plug#end()
+" setup end
+
+" PLUGIN SETTINGS:
+colorscheme onedark
+
+" deoplete options
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_ignore_case = 1
+let g:deoplete#enable_camel_case = 1
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#max_abbr_width = 0
+let g:deoplete#max_menu_width = 0
+" disable autocomplete by default
+let b:deoplete_disable_auto_complete=1
+let g:deoplete_disable_auto_complete=1
+call deoplete#custom#buffer_option('auto_complete', v:false)
+if !exists('g:deoplete#omni#input_patterns')
+    let g:deoplete#omni#input_patterns = {}
+endif
+" Disable the candidates in Comment/String syntaxes.
+call deoplete#custom#source('_',
+            \ 'disabled_syntaxes', ['Comment', 'String'])
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+" C
+let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
+let g:chromatica#enable_at_startup=1
+let g:chromatica#libclang_path = '/usr/lib/libclang.so'
+let b:neoinclude_paths = '.,/usr/include,,'
+" Python
+let g:deoplete#sources#jedi#show_docstring = 1
+let g:deoplete#sources#jedi#python_path = '/usr/bin/python'
+call deoplete#custom#option('profile', v:true)
+call deoplete#enable_logging('DEBUG', '/tmp/deoplete.log')
+call deoplete#custom#source('jedi', 'is_debug_enabled', 1)
+
+" If you execute :Pydocstring at no `def`, `class` line.
+" g:pydocstring_enable_comment enable to put comment.txt value.
+let g:pydocstring_enable_comment = 0
+" Disable this option to prevent pydocstring from creating any
+" key mapping to the `:Pydocstring` command.
+" Note: this value is overridden if you explicitly create a
+" mapping in your vimrc, such as if you do:
+let g:pydocstring_enable_mapping = 0
+
+" neosnippet
+" Enable snipMate compatibility feature.
+let g:neosnippet#enable_snipmate_compatibility = 1
+" Tell Neosnippet about the other snippets
+let g:neosnippet#snippets_directory='~/.vim/plugged/neosnippet-snippets/neosnippets'
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+" SuperTab like snippets behavior.
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+"imap <expr><TAB>
+" \ pumvisible() ? "\<C-n>" :
+" \ neosnippet#expandable_or_jumpable() ?
+" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+" For conceal markers.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
+
+" vim-easy-align
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
+" CompleteParameter
+inoremap <silent><expr> ( complete_parameter#pre_complete("()")
+smap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+imap <c-j> <Plug>(complete_parameter#goto_next_parameter)
+smap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+imap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+
+" alrLine Config
+let g:airline_theme='onedark'
+let g:airline_powerline_fonts = 1
+let g:airline_skip_empty_sections = 1
+" tabline
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_splits = 1
+" let g:airline#extensions#tabline#show_buffers = 1
+let g:airline#extensions#tabline#show_tab_nr = 1
+let g:airline#extensions#tabline#buffer_nr_show = 0
+let g:airline#extensions#tabline#tab_nr_type = 2 " splits and tab number
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+let g:airline#extensions#tabline#buffer_nr_format = '%s:'
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#fnamecollapse = 2
+let g:airline#extensions#tabline#fnametruncate = 16
+let g:airline#extensions#tabline#formatter = 'default'
+" buffer select
+noremap <A-Left>  :bprevious<CR>
+noremap <A-Right> :bnext<CR>
+noremap <leader>d	:bdelete<CR>
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
+nmap <leader>9 <Plug>AirlineSelectTab9
+" ale
+let g:airline#extensions#ale#enabled = 1
+let airline#extensions#ale#error_symbol = 'E:'
+let airline#extensions#ale#warning_symbol = 'W:'
+let airline#extensions#ale#show_line_numbers = 1
+let airline#extensions#ale#open_lnum_symbol = '(L'
+let airline#extensions#ale#close_lnum_symbol = ')'
+" virtualenv for python
+let g:airline#extensions#virtualenv#enabled = 1
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+let g:airline#extensions#tabline#buffer_idx_format = {
+            \ '0': '0 ',
+            \ '1': '1 ',
+            \ '2': '2 ',
+            \ '3': '3 ',
+            \ '4': '4 ',
+            \ '5': '5 ',
+            \ '6': '6 ',
+            \ '7': '7 ',
+            \ '8': '8 ',
+            \ '9': '9 '
+            \}
+" tabline symbol
+let g:airline#extensions#tabline#left_sep = ''
+let g:airline#extensions#tabline#right_sep = ''
+" powerline symbols
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.redonly = ''
+let g:airline_symbols.linenr = '☰'
+let g:airline_symbols.maxlinenr = ''
+" tagbar integration
+let g:airline#extensions#tagbar#enabled = 1
+let g:airline#extensions#tagbar#flags = ''
+let g:airline#extensions#tagbar#flags = 'f'
+let g:airline#extensions#tagbar#flags = 's'
+let g:airline#extensions#tagbar#flags = 'p'
+
+" tagbar config
+let g:tagbar_width=40
+let g:tagbar_autoclose=1
+let g:tagbar_autofocus=1
+let g:tagbar_sort=0
+let g:tagbar_compact=1
+let g:tagbar_show_linenumbers=1
+let g:tagbar_show_visibility=0
+let g:tagbar_autoshowtag=1
+let g:tagbar_map_togglefold='o'
+let g:tagbar_map_openallfolds='O'
+let g:tagbar_map_closefold='x'
+let g:tagbar_map_closeallfolds='X'
+let g:tagbar_map_togglesort=''
+let g:tagbar_map_toggleautoclose=''
+let g:tagbar_map_zoomwin=''
+
+" nerd-commenter, copy from SpaceVim
+let g:NERDSpaceDelims = 1
+let g:NERDCreateDefaultMappings = 0
+let g:NERDRemoveExtraSpaces = 1
+let g:NERDCompactSexyComs = 1
+" Align line-wise comment delimiters flush left instead of following code
+" indentation
+let g:NERDDefaultAlign = 'left'
+" Allow commenting and inverting empty lines (useful when commenting a
+" region)
+let g:NERDCommentEmptyLines = 1
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+" Always use alternative delimiter
+let g:NERD_c_alt_style = 1
+let g:NERDCustomDelimiters = {'c': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' }}
+
+" NERDTree.vim
+let g:NERDTreeQuitOnOpen=1
+let g:NERDTreeShowLineNumbers=1
+let g:NERDTreeWinPos="left"
+let g:NERDTreeWinSize=40
+let g:NERDTreeMinimalUI=1
+let g:NERDTreeDirArrows=1   "dir arrow: 1-arrow  0-'+-|'
+let g:NERDTreeAutoCenter=1
+let NERDTreeShowHidden=1
+let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
+let NERDTreeRespectWildIgnore = 1
+let NERDTreeShowBookmarks=1
+" close automatically when it is the last window
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+"  vim-nerdtree-tabs.vim
+let g:nerdtree_tabs_open_on_console_startup=0
+" always focus file window after startup
+let g:nerdtree_tabs_smart_startup_focus=2
+"let g:nerdtree_tabs_focus_on_files=1
+"let g:nerdtree_tabs_autofind=1
+
+" nerdtree-git-plugin.vim
+let g:NERDTreeShowGitStatus = 1
+let g:NERDTreeIndicatorMapCustom = {
+			\ "Modified"  : "✹",
+			\ "Staged"    : "✚",
+			\ "Untracked" : "✭",
+			\ "Renamed"   : "➜",
+			\ "Unmerged"  : "═",
+			\ "Deleted"   : "✖",
+			\ "Dirty"     : "✗",
+			\ "Clean"     : "✔︎",
+			\ "Unknown"   : "?"
+			\ }
+
+"easy-motion config
+"<Leader>f{char} to move to {char}
+map <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+"s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)
+" Move to line
+map <Leader>L <Plug>(easymotion-bd-jk)
+nmap <Leader>L <Plug>(easymotion-overwin-line)
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
+
+" "ultisnips config
+let g:UltiSnipsEditSplit = "context"
+let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/snippets"
+let g:UltiSnipsExpandTrigger="<s-tab>"
+let g:UltiSnipsListSnippets = "<c-tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" undotree.vim
+let g:undotree_WindowLayout = 2
+
+" dirdiff.vim
+let g:DirDiffExcludes = "CVS,*.class,*.o"
+let g:DirDiffIgnore = "Id:"
+" ignore white space in diff
+let g:DirDiffAddArgs = "-w"
+let g:DirDiffEnableMappings = 1
+
+" startify
+function! s:list_commits()
+    let git = 'git -C ~/repo'
+    let commits = systemlist(git .' log --oneline | head -n10')
+    let git = 'G'. git[1:]
+    return map(commits, '{"line": matchstr(v:val, "\\s\\zs.*"), "cmd": "'. git .' show ". matchstr(v:val, "^\\x\\+") }')
+endfunction
+let g:startify_session_dir = $HOME .  '/.data/' . ( has('nvim') ? 'nvim' : 'vim' ) . '/session'
+let g:startify_lists = [
+            \ { 'header': ['   MRU'],            'type': 'files' },
+            \ { 'header': ['   MRU '. getcwd()], 'type': 'dir' },
+            \ { 'header': ['   Sessions'],       'type': 'sessions' },
+            \ { 'header': ['   Commits'],        'type': function('s:list_commits') },
+            \ ]
+let g:startify_change_to_dir = 0
+let g:startify_update_oldfiles = 1
+let g:startify_files_number = 8
+let g:startify_session_autoload    = 1
+let g:startify_session_persistence = 1
+let g:startify_skiplist = [
+            \ 'COMMIT_EDITMSG',
+            \ 'bundle/.*/doc',
+            \ ]
+let g:startify_custom_header =
+            \ startify#fortune#cowsay('', '═','║','╔','╗','╝','╚')
+hi StartifyBracket ctermfg=240
+hi StartifyFile    ctermfg=147
+hi StartifyFooter  ctermfg=240
+hi StartifyHeader  ctermfg=114
+hi StartifyNumber  ctermfg=215
+hi StartifyPath    ctermfg=245
+hi StartifySlash   ctermfg=240
+hi StartifySpecial ctermfg=240
+
+" Man.vim
+source $VIMRUNTIME/ftplugin/man.vim
+" Linux Programmer's Manual
+" <C-m> is Enter in quickfix window
+nmap <C-\>a :Man <C-R>=expand("<cword>")<cr><cr>
+nmap <C-\>2 :Man 2 <C-R>=expand("<cword>")<cr><cr>
+
+" window-resize
+nmap w= :res +5<CR>
+nmap w- :res -5<CR>
+nmap w, :vertical res +10<CR>
+nmap w. :vertical res -10<CR>
+
+""""""""""""""""""""""""""""""""""""
+"
+set noswapfile
+
+" share system clipboard
+set clipboard=unnamedplus " When possible use + register for copy-paste
+
+"cursor line
+set linespace=2
+set cursorline
+
+""""""""""""""""""""""""""""""
+" 编辑文件相关配置
+""""""""""""""""""""""""""""""
+" 常规模式下输入 cM 清除行尾 ^M 符号
+nmap cM :%s/\r$//g<CR>:noh<CR>
+
+" 删除行尾空格
+nmap cm :%s/\s\+$//<CR>:noh<CR>
+
+" 全部缩进(indent)对齐
+nmap ci ggVG=
+
+" 复制全部
+nmap cy ggVGy
+
+" 启用每行超过80列的字符提示（背景变brown)
+"highlight MyGroup ctermbg=brown guibg=brown
+"au BufWinEnter * let w:m2=matchadd('MyGroup', '\%>' . 80 . 'v.\+', -1)
+
+" Highlight unwanted spaces
+" highlight ExtraWhitespace ctermbg=red guibg=red
+"autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/
+
+" Highlight variable under cursor in Vim
+let g:HlUnderCursor=0
+let g:no_highlight_group_for_current_word=["Statement", "Comment", "Type", "PreProc"]
+function HighlightWordUnderCursor()
+	let l:syntaxgroup = synIDattr(synIDtrans(synID(line("."), stridx(getline("."), expand('<cword>')) + 1, 1)), "name")
+
+	if (index(g:no_highlight_group_for_current_word, l:syntaxgroup) == -1)
+		"exe printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\'))
+		exe exists("g:HlUnderCursor")?g:HlUnderCursor?printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\')):'match none':""
+	else
+		"exe 'match IncSearch /\V\<\>/'
+		exe 'match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/'
+	endif
+endfunction
+map <leader>\ :call HighlightWordUnderCursor()<CR>
+" define a shortcut key for enabling/disabling highlighting:
+nnoremap  <C-\> :exe "let g:HlUnderCursor=exists(\"g:HlUnderCursor\")?g:HlUnderCursor*-1+1:1"<CR>
