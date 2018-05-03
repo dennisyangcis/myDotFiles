@@ -122,10 +122,10 @@ vnoremap <space> :
 " Switching between buffers.
 " switch to normal
 inoremap jk <Esc>
-noremap <C-j>  <C-W>j
-noremap <C-k>  <C-W>k
-noremap <C-h>  <C-W>h
-noremap <C-l>  <C-W>l
+nnoremap <C-j>  <C-W>j
+nnoremap <C-k>  <C-W>k
+nnoremap <C-h>  <C-W>h
+nnoremap <C-l>  <C-W>l
 
 " "cd" to change to open directory.
 let OpenDir=system("pwd")
@@ -212,7 +212,22 @@ let $GTAGSLABEL = 'native-pygments'
 let $GTAGSCONF = '/usr/share/gtags/gtags.conf'
 let $GTAGSLIBPATH='/usr/include/'
 let g:gen_tags#gtags_auto_gen = 1
+let g:loaded_gentags#gtags = 0
 let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
+let g:gen_tags#ctags_auto_gen = 0
+nmap <silent><leader>gg :GenGTAGS<cr>
+nmap <silent><leader>cg :ClearGTAGS!<cr>
+"""
+"  Ctrl+\ c    Find functions calling this function
+"  Ctrl+\ d    Find functions called by this function
+"  Ctrl+\ e    Find this egrep pattern
+"  Ctrl+\ f    Find this file
+"  Ctrl+\ g    Find this definition
+"  Ctrl+\ i    Find files #including this file
+"  Ctrl+\ s    Find this C symbol
+"  Ctrl+\ t    Find this text string
+"""
+
 " code completion
 " ycm
 let g:ycm_show_diagnostics_ui = 0
@@ -257,8 +272,8 @@ let g:ale_linters = {
             \   'java': ['javac'],
             \}
 
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
+nmap <silent> <M-k> <Plug>(ale_previous_wrap)
+nmap <silent> <M-j> <Plug>(ale_next_wrap)
 
 " c-family color
 let g:chromatica#enable_at_startup=1
@@ -270,8 +285,6 @@ let g:pymode_virtualenv_path = $VIRTUAL_ENV
 let g:pymode_lint = 0   " use ale instead
 
 " leaderf config
-let g:Lf_ShortcutF = '<C-p>'
-let g:Lf_ShortcutB = '<C-b>'
 let g:Lf_CursorBlink = 1
 let g:Lf_StlSeparator = { 'left': '', 'right': '' }
 let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git', '.hg', '.ycm_extra_conf.py']
@@ -290,6 +303,12 @@ let g:Lf_NormalMap = {
             \ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
             \ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
             \ }
+let g:Lf_ShortcutF = '<C-p>'
+let g:Lf_ShortcutB = '<C-b>'
+noremap <c-n> :LeaderfMru<cr>
+noremap <m-p> :LeaderfFunction!<cr>
+noremap <m-n> :LeaderfBuffer<cr>
+noremap <m-m> :LeaderfTag<cr>
 
 " terminal, copy from SPCVim
 let g:pos = 'bottom'
@@ -317,6 +336,8 @@ function OpenShell()
     endif
 endfunction
 
+nnoremap <space>; :call OpenShell()<cr>
+
 " vim-easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -325,10 +346,8 @@ nmap ga <Plug>(EasyAlign)
 
 " CompleteParameter
 inoremap <silent><expr> ( complete_parameter#pre_complete("()")
-smap <c-j> <Plug>(complete_parameter#goto_next_parameter)
-imap <c-j> <Plug>(complete_parameter#goto_next_parameter)
-smap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
-imap <c-k> <Plug>(complete_parameter#goto_previous_parameter)
+imap <silent><tab> <Plug>(complete_parameter#goto_next_parameter)
+imap <silent><S-tab> <Plug>(complete_parameter#goto_previous_parameter)
 
 " alrLine Config
 let g:airline_theme='onedark'
@@ -404,8 +423,29 @@ let g:airline#extensions#tagbar#flags = 'f'
 let g:airline#extensions#tagbar#flags = 's'
 let g:airline#extensions#tagbar#flags = 'p'
 
+" choosewin
+" invoke with '-'
+nmap  -  <Plug>(choosewin)
+" use overlay feature
+let g:choosewin_overlay_enable = 1
+" workaround for the overlay font being broken on mutibyte buffer.
+let g:choosewin_overlay_clear_multibyte = 1
+" tmux-like overlay color
+let g:choosewin_color_overlay = {
+            \ 'gui': ['DodgerBlue3', 'DodgerBlue3'],
+            \ 'cterm': [25, 25]
+            \ }
+let g:choosewin_color_overlay_current = {
+            \ 'gui': ['firebrick1', 'firebrick1'],
+            \ 'cterm': [124, 124]
+            \ }
+let g:choosewin_blink_on_land      = 0 " don't blink at land
+let g:choosewin_statusline_replace = 0 " don't replace statusline
+let g:choosewin_tabline_replace    = 0 " don't replace tabline
+
+
 " tagbar config
-let g:tagbar_width=40
+let g:tagbar_width=30
 let g:tagbar_autoclose=1
 let g:tagbar_autofocus=1
 let g:tagbar_sort=0
@@ -420,6 +460,7 @@ let g:tagbar_map_closeallfolds='X'
 let g:tagbar_map_togglesort=''
 let g:tagbar_map_toggleautoclose=''
 let g:tagbar_map_zoomwin=''
+nnoremap <silent><leader>t :TagbarToggle<cr>
 
 " nerd-commenter, copy from SpaceVim
 let g:NERDSpaceDelims = 1
@@ -442,7 +483,7 @@ let g:NERDCustomDelimiters = {'c': { 'left': '//', 'leftAlt': '/*', 'rightAlt': 
 let g:NERDTreeQuitOnOpen=1
 let g:NERDTreeShowLineNumbers=1
 let g:NERDTreeWinPos="left"
-let g:NERDTreeWinSize=40
+let g:NERDTreeWinSize=30
 let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows=1   "dir arrow: 1-arrow  0-'+-|'
 let g:NERDTreeAutoCenter=1
@@ -459,6 +500,7 @@ let g:nerdtree_tabs_open_on_console_startup=0
 let g:nerdtree_tabs_smart_startup_focus=2
 "let g:nerdtree_tabs_focus_on_files=1
 "let g:nerdtree_tabs_autofind=1
+nnoremap <silent><leader>f :NERDTreeTabsToggle<cr>
 
 " nerdtree-git-plugin.vim
 let g:NERDTreeShowGitStatus = 1
@@ -475,9 +517,9 @@ let g:NERDTreeIndicatorMapCustom = {
 			\ }
 
 "easy-motion config
-"<Leader>f{char} to move to {char}
-map <Leader>f <Plug>(easymotion-bd-f)
-nmap <Leader>f <Plug>(easymotion-overwin-f)
+"<Leader>s{char} to move to {char}
+map <Leader>s <Plug>(easymotion-bd-f)
+nmap <Leader>s <Plug>(easymotion-overwin-f)
 "s{char}{char} to move to {char}{char}
 nmap s <Plug>(easymotion-overwin-f2)
 " Move to line
@@ -490,10 +532,9 @@ nmap <Leader>w <Plug>(easymotion-overwin-w)
 " "ultisnips config
 let g:UltiSnipsEditSplit = "context"
 let g:UltiSnipsSnippetsDir = "~/.vim/plugged/vim-snippets/snippets"
-let g:UltiSnipsExpandTrigger="<s-tab>"
-let g:UltiSnipsListSnippets = "<c-tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsExpandTrigger='<NOP>'
+let g:UltiSnipsJumpForwardTrigger='<NOP>'
+let g:UltiSnipsJumpBackwardTrigger='<NOP>'
 
 " undotree.vim
 let g:undotree_WindowLayout = 2
