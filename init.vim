@@ -41,7 +41,7 @@ set   termencoding=utf-8
 set   textwidth=80
 set   wrap
 set   whichwrap=<,>,[,]
-
+set   noshowmode
 " global ignore
 set wildignore=
 "common
@@ -153,41 +153,34 @@ Plug 'tpope/vim-unimpaired'
 Plug 'jsfaint/gen_tags.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-fuzzy.vim'
-
+Plug 'Shougo/echodoc.vim'
 " code completion
-" for deoplete
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-" for c
-Plug 'zchee/deoplete-clang'
-Plug 'arakashic/chromatica.nvim'
-Plug 'Shougo/neoinclude.vim'
-" for js
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-" for python
-Plug 'zchee/deoplete-jedi'
-Plug 'heavenshell/vim-pydocstring'
-Plug 'Vimjas/vim-python-pep8-indent'
-Plug 'tell-k/vim-autoflake'
-" for viml
-Plug 'Shougo/neco-vim'
-
-Plug 'Shougo/neosnippet.vim'
-Plug 'Shougo/neosnippet-snippets'
-" terminal in neovim
-Plug 'Shougo/vimshell.vim'
-Plug 'Shougo/deol.nvim'
+" load YCM
+function! BuildYCM(info)
+	" info is a dictionary with 3 fields
+	" - name:   name of the plugin
+	" - status: 'installed', 'updated', or 'unchanged'
+	" - force:  set on PlugInstall! or PlugUpdate!
+	if a:info.status == 'installed' || a:info.force
+		!./install.py --clang-completer --js-completer --java-completer --system-libclang --system-boost
+	endif
+endfunction
+Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+" c syntax color
+Plug 'arakashic/chromatica.nvim', { 'for': ['c', 'cpp', 'h', 'hpp']}
+" python tools
+Plug 'python-mode/python-mode', { 'branch': 'develop', 'for': ['python'] }
+Plug 'heavenshell/vim-pydocstring', { 'for': 'python'}
+Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python'}
+Plug 'tell-k/vim-autoflake', { 'for': 'python'}
+Plug 'plytophogy/vim-virtualenv'
 " others lang
-Plug 'plasticboy/vim-markdown'
+Plug 'plasticboy/vim-markdown', { 'for': 'markdown'}
 " utils
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'tenfyzhong/CompleteParameter.vim'
 Plug 'w0rp/ale'
-Plug 'Shougo/denite.nvim'
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 " nerdtree
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeTabsToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeTabsToggle' }
@@ -207,7 +200,6 @@ Plug 'ryanoasis/vim-devicons' " file icons
 Plug 'scrooloose/nerdcommenter'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'jiangmiao/auto-pairs'
-Plug 'plytophogy/vim-virtualenv'
 
 call plug#end()
 " setup end
@@ -215,68 +207,115 @@ call plug#end()
 " PLUGIN SETTINGS:
 colorscheme onedark
 
-" deoplete options
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_ignore_case = 1
-let g:deoplete#enable_camel_case = 1
-let g:deoplete#enable_refresh_always = 1
-let g:deoplete#max_abbr_width = 0
-let g:deoplete#max_menu_width = 0
-" disable autocomplete by default
-let b:deoplete_disable_auto_complete=1
-let g:deoplete_disable_auto_complete=1
-call deoplete#custom#buffer_option('auto_complete', v:false)
-if !exists('g:deoplete#omni#input_patterns')
-    let g:deoplete#omni#input_patterns = {}
-endif
-" Disable the candidates in Comment/String syntaxes.
-call deoplete#custom#source('_',
-            \ 'disabled_syntaxes', ['Comment', 'String'])
-autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
-" C
-let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
-let g:deoplete#sources#clang#clang_header = '/usr/lib/clang'
+" tags
+let $GTAGSLABEL = 'native-pygments'
+let $GTAGSCONF = '/usr/share/gtags/gtags.conf'
+let $GTAGSLIBPATH='/usr/include/'
+let g:gen_tags#gtags_auto_gen = 1
+let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
+" code completion
+" ycm
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_complete_in_comments=1
+let g:ycm_complete_in_strings=1
+let g:ycm_collect_identifiers_from_comments_and_strings=1
+let g:ycm_confirm_extra_conf=0
+let g:ycm_key_invoke_completion = '<c-x><c-u>'
+let g:ycm_key_list_select_completion = ['<TAB>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<S-TAB>', '<Up>']
+let g:ycm_semantic_triggers =  {
+            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+            \ 'cs,lua,javascript': ['re!\w{2}'],
+            \ }
+
+" syntax check
+let g:ale_linters_explicit = 1
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+let g:ale_c_cppcheck_options = ''
+let g:ale_cpp_cppcheck_options = ''
+
+let g:ale_linters = {
+            \   'bash': ['shell'],
+            \   'sh': ['shell'],
+            \   'help': [],
+            \   'python': ['flake8', 'autoflake', 'pylint', 'yapf', 'isort'],
+            \   'spec': [],
+            \   'text': [],
+            \   'zsh': ['shell'],
+            \   'c': ['cppcheck', 'gcc'],
+            \   'javascript': ['eslint'],
+            \   'markdown': ['mdl'],
+            \   'html': ['tidy'],
+            \   'java': ['javac'],
+            \}
+
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+" c-family color
 let g:chromatica#enable_at_startup=1
 let g:chromatica#libclang_path = '/usr/lib/libclang.so'
-let b:neoinclude_paths = '.,/usr/include,,'
-" Python
-let g:deoplete#sources#jedi#show_docstring = 1
-let g:deoplete#sources#jedi#python_path = '/usr/bin/python'
-call deoplete#custom#option('profile', v:true)
-call deoplete#enable_logging('DEBUG', '/tmp/deoplete.log')
-call deoplete#custom#source('jedi', 'is_debug_enabled', 1)
 
-" If you execute :Pydocstring at no `def`, `class` line.
-" g:pydocstring_enable_comment enable to put comment.txt value.
-let g:pydocstring_enable_comment = 0
-" Disable this option to prevent pydocstring from creating any
-" key mapping to the `:Pydocstring` command.
-" Note: this value is overridden if you explicitly create a
-" mapping in your vimrc, such as if you do:
-let g:pydocstring_enable_mapping = 0
+" py mode
+let g:pymode_virtualenv = 1
+let g:pymode_virtualenv_path = $VIRTUAL_ENV
+let g:pymode_lint = 0   " use ale instead
 
-" neosnippet
-" Enable snipMate compatibility feature.
-let g:neosnippet#enable_snipmate_compatibility = 1
-" Tell Neosnippet about the other snippets
-let g:neosnippet#snippets_directory='~/.vim/plugged/neosnippet-snippets/neosnippets'
-" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
-" SuperTab like snippets behavior.
-" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-"imap <expr><TAB>
-" \ pumvisible() ? "\<C-n>" :
-" \ neosnippet#expandable_or_jumpable() ?
-" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-" For conceal markers.
-if has('conceal')
-  set conceallevel=2 concealcursor=niv
-endif
+" leaderf config
+let g:Lf_ShortcutF = '<C-p>'
+let g:Lf_ShortcutB = '<C-b>'
+let g:Lf_CursorBlink = 1
+let g:Lf_StlSeparator = { 'left': '', 'right': '' }
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git', '.hg', '.ycm_extra_conf.py']
+let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_WindowHeight = 0.30
+let g:Lf_CacheDirectory = expand('~/.vim/cache/leaderf')
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_PreviewResult = {'Function':0}
+let g:Lf_NormalMap = {
+            \ "File":   [["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']],
+            \ "Buffer": [["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<CR>']],
+            \ "Mru":    [["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<CR>']],
+            \ "Tag":    [["<ESC>", ':exec g:Lf_py "tagExplManager.quit()"<CR>']],
+            \ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
+            \ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
+            \ }
+
+" terminal, copy from SPCVim
+let g:pos = 'bottom'
+let g:height = 30
+function OpenShell()
+    let cmd = g:pos ==# 'top' ?
+                \ 'topleft split' :
+                \ g:pos ==# 'bottom' ?
+                \ 'botright split' :
+                \ g:pos ==# 'right' ?
+                \ 'rightbelow vsplit' : 'leftabove vsplit'
+    exe cmd
+    let lines = &lines * g:height / 100
+    if lines < winheight(0) && (g:pos ==# 'top' || g:pos ==# 'bottom')
+        exe 'resize ' . lines
+    endif
+    if exists(':terminal')
+        exe 'terminal'
+        let s:shell_win_nr = winnr()
+        let w:shell_layer_win = 1
+        setlocal nobuflisted
+        startinsert
+    else
+        echo ':terminal is not supported in this version'
+    endif
+endfunction
 
 " vim-easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -450,7 +489,7 @@ nmap <Leader>w <Plug>(easymotion-overwin-w)
 
 " "ultisnips config
 let g:UltiSnipsEditSplit = "context"
-let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/snippets"
+let g:UltiSnipsSnippetsDir = "~/.vim/plugged/vim-snippets/snippets"
 let g:UltiSnipsExpandTrigger="<s-tab>"
 let g:UltiSnipsListSnippets = "<c-tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
