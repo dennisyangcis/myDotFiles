@@ -67,6 +67,12 @@ set wildmode=list:longest,full
 set wrap
 set t_Co=256
 
+" open file at last postion
+autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
 " create file settings
 autocmd BufNewFile *.cpp,*.cc,*.c,*.hpp,*.h,*.sh,*.py exec ":call SetTitle()"
 func SetTitle()
@@ -122,10 +128,10 @@ vnoremap <space> :
 " Switching between buffers.
 " switch to normal
 inoremap jk <Esc>
-nnoremap <C-j>  <C-W>j
-nnoremap <C-k>  <C-W>k
-nnoremap <C-h>  <C-W>h
-nnoremap <C-l>  <C-W>l
+nnoremap <C-down>  <C-W>j
+nnoremap <C-up>  <C-W>k
+nnoremap <C-left>  <C-W>h
+nnoremap <C-right>  <C-W>l
 
 " "cd" to change to open directory.
 let OpenDir=system("pwd")
@@ -167,9 +173,9 @@ function! BuildYCM(info)
 endfunction
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 " c syntax color
-Plug 'arakashic/chromatica.nvim', { 'for': ['c', 'cpp', 'h', 'hpp']}
+Plug 'arakashic/chromatica.nvim'
 " python tools
-Plug 'python-mode/python-mode', { 'branch': 'develop', 'for': ['python'] }
+" Plug 'python-mode/python-mode', { 'branch': 'develop', 'for': ['python'] }
 Plug 'heavenshell/vim-pydocstring', { 'for': 'python'}
 Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python'}
 Plug 'tell-k/vim-autoflake', { 'for': 'python'}
@@ -215,9 +221,11 @@ let g:gen_tags#gtags_auto_gen = 1
 let g:loaded_gentags#gtags = 0
 let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
 let g:gen_tags#ctags_auto_gen = 0
-nmap <silent><leader>gg :GenGTAGS<cr>
-nmap <silent><leader>cg :ClearGTAGS!<cr>
-"""
+let g:gen_tags#blacklist = ['/home/yangcis/.vim/plugged']
+nmap <leader>gg :GenGTAGS<cr>
+nmap <leader>cg :ClearGTAGS!<cr>
+autocmd User GenTags#GtagsLoaded nnoremap <leader>gd <c-]>
+""" short cuts:
 "  Ctrl+\ c    Find functions calling this function
 "  Ctrl+\ d    Find functions called by this function
 "  Ctrl+\ e    Find this egrep pattern
@@ -236,13 +244,16 @@ let g:ycm_complete_in_comments=1
 let g:ycm_complete_in_strings=1
 let g:ycm_collect_identifiers_from_comments_and_strings=1
 let g:ycm_confirm_extra_conf=0
+let g:ycm_global_ycm_extra_conf = '~/codes/.ycm_extra_conf.py'
 let g:ycm_key_invoke_completion = '<c-x><c-u>'
-let g:ycm_key_list_select_completion = ['<TAB>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<S-TAB>', '<Up>']
+let g:ycm_key_list_select_completion = ['<Down>']
+let g:ycm_key_list_previous_completion = ['<Up>']
 let g:ycm_semantic_triggers =  {
             \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
             \ 'cs,lua,javascript': ['re!\w{2}'],
             \ }
+set completeopt=menu,menuone
+let g:ycm_add_preview_to_completeopt = 0
 
 " syntax check
 let g:ale_linters_explicit = 1
@@ -279,10 +290,25 @@ nmap <silent> <M-j> <Plug>(ale_next_wrap)
 let g:chromatica#enable_at_startup=1
 let g:chromatica#libclang_path = '/usr/lib/libclang.so'
 
-" py mode
-let g:pymode_virtualenv = 1
-let g:pymode_virtualenv_path = $VIRTUAL_ENV
-let g:pymode_lint = 0   " use ale instead
+" " py mode
+" let g:pymode_virtualenv = 1
+" let g:pymode_virtualenv_path = $VIRTUAL_ENV
+" let g:pymode_lint = 0   " use ale instead
+
+" auto paris cfg, copy from zf_vimrc
+let g:AutoPairsShortcurToggle=''
+let g:AutoPairsShortcutFastWrap=''
+let g:AutoPairsShortcutJump=''
+let g:AutoPairsShortcutBackInsert=''
+let g:AutoPairsCenterLine=0
+let g:AutoPairsMultilineClose=0
+let g:AutoPairsMapBS=1
+let g:AutoPairsMapCh=0
+let g:AutoPairsMapCR=0
+let g:AutoPairsCenterLine=0
+let g:AutoPairsMapSpace=0
+let g:AutoPairsFlyMode=0
+let g:AutoPairsMultilineClose=0
 
 " leaderf config
 let g:Lf_CursorBlink = 1
@@ -293,7 +319,7 @@ let g:Lf_WindowHeight = 0.30
 let g:Lf_CacheDirectory = expand('~/.vim/cache/leaderf')
 let g:Lf_ShowRelativePath = 0
 let g:Lf_HideHelp = 1
-let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_StlColorscheme = 'onedark'
 let g:Lf_PreviewResult = {'Function':0}
 let g:Lf_NormalMap = {
             \ "File":   [["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']],
@@ -306,8 +332,8 @@ let g:Lf_NormalMap = {
 let g:Lf_ShortcutF = '<C-p>'
 let g:Lf_ShortcutB = '<C-b>'
 noremap <c-n> :LeaderfMru<cr>
-noremap <m-p> :LeaderfFunction!<cr>
-noremap <m-n> :LeaderfBuffer<cr>
+noremap <m-l> :LeaderfFunction!<cr>
+noremap <m-h> :LeaderfBuffer<cr>
 noremap <m-m> :LeaderfTag<cr>
 
 " terminal, copy from SPCVim
@@ -335,8 +361,13 @@ function OpenShell()
         echo ':terminal is not supported in this version'
     endif
 endfunction
+nnoremap <silent><space>; :call OpenShell()<cr>
 
-nnoremap <space>; :call OpenShell()<cr>
+" nerd commenter cfg
+nmap <silent><leader>cs <Plug>NERDCommenterInvert
+nmap <silent><leader>cv <Plug>NERDCommenterInvertgv
+nmap <silent><leader>cp vip<Plug>NERDCommenterComment
+nmap <silent><leader>cP vip<Plug>NERDCommenterInvert
 
 " vim-easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -345,10 +376,38 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 " CompleteParameter
-inoremap <silent><expr> ( complete_parameter#pre_complete("()")
-imap <silent><tab> <Plug>(complete_parameter#goto_next_parameter)
-imap <silent><S-tab> <Plug>(complete_parameter#goto_previous_parameter)
-
+function! Plugin_CompleteParameter_tab(forward)
+    if pumvisible()
+        return a:forward ? "\<c-n>" : "\<c-p>"
+    endif
+    if cmp#jumpable(a:forward)
+        if a:forward
+            return "\<Plug>(complete_parameter#goto_next_parameter)"
+        else
+            return "\<Plug>(complete_parameter#goto_previous_parameter)"
+        endif
+    endif
+    if a:forward
+        let line = getline('.')
+        let col = col('.')
+        if col <= 1 || len(line) < col - 2 || line[col - 2] == ' ' || line[col - 2] == "\<tab>"
+            return "\<tab>"
+        endif
+        return "\<c-x>\<c-u>"
+    endif
+    return ''
+endfunction
+function! Plugin_CompleteParameter_setting()
+    inoremap <silent><expr> <cr> pumvisible() ? "\<c-y>" . complete_parameter#pre_complete('') : "\<c-g>u\<cr>"|
+    map <tab> <Plug>(complete_parameter#goto_next_parameter)
+    map <s-tab> <Plug>(complete_parameter#goto_previous_parameter)
+    imap <silent><expr> <tab> '' . Plugin_CompleteParameter_tab(1)
+    imap <silent><expr> <s-tab> '' . Plugin_CompleteParameter_tab(0)
+endfunction
+augroup ZF_Plugin_CompleteParameter_augroup
+    autocmd!
+    autocmd FileType * call Plugin_CompleteParameter_setting()
+augroup END
 " alrLine Config
 let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
@@ -446,7 +505,7 @@ let g:choosewin_tabline_replace    = 0 " don't replace tabline
 
 " tagbar config
 let g:tagbar_width=30
-let g:tagbar_autoclose=1
+" let g:tagbar_autoclose=1
 let g:tagbar_autofocus=1
 let g:tagbar_sort=0
 let g:tagbar_compact=1
@@ -480,7 +539,7 @@ let g:NERD_c_alt_style = 1
 let g:NERDCustomDelimiters = {'c': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' }}
 
 " NERDTree.vim
-let g:NERDTreeQuitOnOpen=1
+" let g:NERDTreeQuitOnOpen=1
 let g:NERDTreeShowLineNumbers=1
 let g:NERDTreeWinPos="left"
 let g:NERDTreeWinSize=30
@@ -604,22 +663,15 @@ set clipboard=unnamedplus " When possible use + register for copy-paste
 set linespace=2
 set cursorline
 
-""""""""""""""""""""""""""""""
-" 编辑文件相关配置
-""""""""""""""""""""""""""""""
-" 常规模式下输入 cM 清除行尾 ^M 符号
+" clear  ^M at the end of line in normal mode
 nmap cM :%s/\r$//g<CR>:noh<CR>
 
-" 删除行尾空格
+" delete SPACE at the end of line
 nmap cm :%s/\s\+$//<CR>:noh<CR>
 
-" 全部缩进(indent)对齐
 nmap ci ggVG=
-
-" 复制全部
 nmap cy ggVGy
 
-" 启用每行超过80列的字符提示（背景变brown)
 "highlight MyGroup ctermbg=brown guibg=brown
 "au BufWinEnter * let w:m2=matchadd('MyGroup', '\%>' . 80 . 'v.\+', -1)
 
