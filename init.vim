@@ -248,12 +248,18 @@ let g:ycm_global_ycm_extra_conf = '~/codes/.ycm_extra_conf.py'
 let g:ycm_key_invoke_completion = '<c-x><c-u>'
 let g:ycm_key_list_select_completion = ['<Down>']
 let g:ycm_key_list_previous_completion = ['<Up>']
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_python_binary_path = 'python'
 let g:ycm_semantic_triggers =  {
             \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
             \ 'cs,lua,javascript': ['re!\w{2}'],
             \ }
-set completeopt=menu,menuone
-let g:ycm_add_preview_to_completeopt = 0
+nnoremap <leader>gt  :YcmCompleter GoTo<CR>
+nnoremap <leader>gd  :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gi  :YcmCompleter GoToInclude<CR>
+nnoremap <leader>gr  :YcmCompleter GoToReferences<CR>
+nnoremap <leader>gf  :YcmCompleter GoToDeclaration<CR>
 
 " syntax check
 let g:ale_linters_explicit = 1
