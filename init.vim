@@ -56,7 +56,7 @@ set wildignore+=*/_tmp/*,*/.tmp/*
 set wildignore+=*/_release/*,*/.release/*
 set wildignore+=*/_build/*,*/build/*
 set wildignore+=*/build/*,*/build-*/*
-set wildignore+=*/bin/*,*/gen/*,*/lib/*,*/libs/*,*/obj/*
+set wildignore+=*/gen/*,*/lib/*,*/libs/*,*/obj/*
 set wildignore+=*/_repo/*
 " c/cpp
 set wildignore+=*/.so/*,*/.o/*,*/.obj/*,*/.class/*
@@ -215,16 +215,17 @@ colorscheme onedark
 
 " tags
 let $GTAGSLABEL = 'native-pygments'
-let $GTAGSCONF = '/usr/share/gtags/gtags.conf'
+let $GTAGSCONF = '~/.globalrc'
 let $GTAGSLIBPATH='/usr/include/'
 let g:gen_tags#gtags_auto_gen = 1
 let g:loaded_gentags#gtags = 0
 let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
 let g:gen_tags#ctags_auto_gen = 0
-let g:gen_tags#blacklist = ['/home/yangcis/.vim/plugged']
+" let g:gen_tags#blacklist = ['/home/yangcis/.vim/plugged/*']
 nmap <leader>gg :GenGTAGS<cr>
 nmap <leader>cg :ClearGTAGS!<cr>
 autocmd User GenTags#GtagsLoaded nnoremap <leader>gd <c-]>
+autocmd filetype c setlocal tags+=/usr/include
 """ short cuts:
 "  Ctrl+\ c    Find functions calling this function
 "  Ctrl+\ d    Find functions called by this function
@@ -278,7 +279,7 @@ let g:ale_linters = {
             \   'bash': ['shell'],
             \   'sh': ['shell'],
             \   'help': [],
-            \   'python': ['flake8', 'autoflake', 'pylint', 'yapf', 'isort'],
+            \   'python': ['flake8', 'autoflake', 'yapf', 'isort'],
             \   'spec': [],
             \   'text': [],
             \   'zsh': ['shell'],
@@ -337,10 +338,10 @@ let g:Lf_NormalMap = {
             \ }
 let g:Lf_ShortcutF = '<C-p>'
 let g:Lf_ShortcutB = '<C-b>'
-noremap <c-n> :LeaderfMru<cr>
+noremap <c-l> :LeaderfMru<cr>
 noremap <m-l> :LeaderfFunction!<cr>
 noremap <m-h> :LeaderfBuffer<cr>
-noremap <m-m> :LeaderfTag<cr>
+noremap <c-m> :LeaderfTag<cr>
 
 " terminal, copy from SPCVim
 let g:pos = 'bottom'
@@ -368,12 +369,6 @@ function OpenShell()
     endif
 endfunction
 nnoremap <silent><space>; :call OpenShell()<cr>
-
-" nerd commenter cfg
-nmap <silent><leader>cs <Plug>NERDCommenterInvert
-nmap <silent><leader>cv <Plug>NERDCommenterInvertgv
-nmap <silent><leader>cp vip<Plug>NERDCommenterComment
-nmap <silent><leader>cP vip<Plug>NERDCommenterInvert
 
 " vim-easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -543,6 +538,11 @@ let g:NERDTrimTrailingWhitespace = 1
 " Always use alternative delimiter
 let g:NERD_c_alt_style = 1
 let g:NERDCustomDelimiters = {'c': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' }}
+" nerd commenter cfg
+nmap <leader>cs <Plug>NERDCommenterInvert
+nmap <leader>cv <Plug>NERDCommenterInvertgv
+nmap <leader>cp vip<Plug>NERDCommenterComment
+nmap <leader>cP vip<Plug>NERDCommenterInvert
 
 " NERDTree.vim
 " let g:NERDTreeQuitOnOpen=1
@@ -699,6 +699,6 @@ function HighlightWordUnderCursor()
 		exe 'match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/'
 	endif
 endfunction
-map <leader>\ :call HighlightWordUnderCursor()<CR>
+" map <leader>\ :call HighlightWordUnderCursor()<CR>
 " define a shortcut key for enabling/disabling highlighting:
-nnoremap  <C-\> :exe "let g:HlUnderCursor=exists(\"g:HlUnderCursor\")?g:HlUnderCursor*-1+1:1"<CR>
+" nnoremap  <C-\> :exe "let g:HlUnderCursor=exists(\"g:HlUnderCursor\")?g:HlUnderCursor*-1+1:1"<CR>
