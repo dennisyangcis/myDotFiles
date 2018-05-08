@@ -133,10 +133,6 @@ nnoremap <C-up>  <C-W>k
 nnoremap <C-left>  <C-W>h
 nnoremap <C-right>  <C-W>l
 
-" "cd" to change to open directory.
-let OpenDir=system("pwd")
-nmap <silent> <leader>cd :exe 'cd ' . OpenDir<cr>:pwd<cr>
-
 " start vim-plug
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
@@ -153,7 +149,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
 Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
-Plug 'will133/vim-dirdiff'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-unimpaired'
 Plug 'jsfaint/gen_tags.vim'
@@ -179,7 +174,8 @@ Plug 'arakashic/chromatica.nvim'
 Plug 'heavenshell/vim-pydocstring', { 'for': 'python'}
 Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python'}
 Plug 'tell-k/vim-autoflake', { 'for': 'python'}
-Plug 'plytophogy/vim-virtualenv'
+Plug 'plytophogy/vim-virtualenv', { 'for': 'python'}
+Plug 'python-mode/python-mode', { 'branch': 'develop' , 'for': 'python'}
 " others lang
 Plug 'plasticboy/vim-markdown', { 'for': 'markdown'}
 " utils
@@ -196,8 +192,8 @@ Plug 'Yggdroot/indentLine'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'majutsushi/tagbar',{ 'on': 'TagbarToggle' }
-Plug 'tenfyzhong/tagbar-makefile.vim'
-Plug 'lvht/tagbar-markdown'
+Plug 'tenfyzhong/tagbar-makefile.vim',{ 'on': 'TagbarToggle' }
+Plug 'lvht/tagbar-markdown',{ 'on': 'TagbarToggle' }
 Plug 't9md/vim-choosewin'
 Plug 'joshdick/onedark.vim'
 Plug 'mhinz/vim-startify'
@@ -215,13 +211,13 @@ colorscheme onedark
 
 " tags
 let $GTAGSLABEL = 'native-pygments'
-let $GTAGSCONF = '~/.globalrc'
 let $GTAGSLIBPATH='/usr/include/'
 let g:gen_tags#gtags_auto_gen = 1
 let g:loaded_gentags#gtags = 0
 let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
 let g:gen_tags#ctags_auto_gen = 0
-" let g:gen_tags#blacklist = ['/home/yangcis/.vim/plugged/*']
+let g:gen_tags#blacklist = ['/home/yangcis/.vim/plugged/*']
+" let g:gen_tags#verbose = 1
 nmap <leader>gg :GenGTAGS<cr>
 nmap <leader>cg :ClearGTAGS!<cr>
 autocmd User GenTags#GtagsLoaded nnoremap <leader>gd <c-]>
@@ -246,7 +242,6 @@ let g:ycm_complete_in_strings=1
 let g:ycm_collect_identifiers_from_comments_and_strings=1
 let g:ycm_confirm_extra_conf=0
 let g:ycm_global_ycm_extra_conf = '~/codes/.ycm_extra_conf.py'
-let g:ycm_key_invoke_completion = '<c-x><c-u>'
 let g:ycm_key_list_select_completion = ['<Down>']
 let g:ycm_key_list_previous_completion = ['<Up>']
 let g:ycm_autoclose_preview_window_after_insertion = 1
@@ -391,8 +386,8 @@ function! Plugin_CompleteParameter_tab(forward)
     if a:forward
         let line = getline('.')
         let col = col('.')
-        if col <= 1 || len(line) < col - 2 || line[col - 2] == ' ' || line[col - 2] == "\<tab>"
-            return "\<tab>"
+        if col <= 1 || len(line) < col - 2 || line[col - 2] == ' ' || line[col - 2] == "\<c-x>"
+            return "\<c-x>"
         endif
         return "\<c-x>\<c-u>"
     endif
@@ -400,10 +395,10 @@ function! Plugin_CompleteParameter_tab(forward)
 endfunction
 function! Plugin_CompleteParameter_setting()
     inoremap <silent><expr> <cr> pumvisible() ? "\<c-y>" . complete_parameter#pre_complete('') : "\<c-g>u\<cr>"|
-    map <tab> <Plug>(complete_parameter#goto_next_parameter)
-    map <s-tab> <Plug>(complete_parameter#goto_previous_parameter)
-    imap <silent><expr> <tab> '' . Plugin_CompleteParameter_tab(1)
-    imap <silent><expr> <s-tab> '' . Plugin_CompleteParameter_tab(0)
+    map <c-x> <Plug>(complete_parameter#goto_next_parameter)
+    " map <c-u> <Plug>(complete_parameter#goto_previous_parameter)
+    imap <silent><expr> <c-x> '' . Plugin_CompleteParameter_tab(1)
+    " imap <silent><expr> <c-u> '' . Plugin_CompleteParameter_tab(0)
 endfunction
 augroup ZF_Plugin_CompleteParameter_augroup
     autocmd!
@@ -503,7 +498,6 @@ let g:choosewin_blink_on_land      = 0 " don't blink at land
 let g:choosewin_statusline_replace = 0 " don't replace statusline
 let g:choosewin_tabline_replace    = 0 " don't replace tabline
 
-
 " tagbar config
 let g:tagbar_width=30
 " let g:tagbar_autoclose=1
@@ -520,7 +514,7 @@ let g:tagbar_map_closeallfolds='X'
 let g:tagbar_map_togglesort=''
 let g:tagbar_map_toggleautoclose=''
 let g:tagbar_map_zoomwin=''
-nnoremap <silent><leader>t :TagbarToggle<cr>
+nnoremap <silent><f2> :TagbarToggle<cr>
 
 " nerd-commenter, copy from SpaceVim
 let g:NERDSpaceDelims = 1
@@ -539,10 +533,10 @@ let g:NERDTrimTrailingWhitespace = 1
 let g:NERD_c_alt_style = 1
 let g:NERDCustomDelimiters = {'c': { 'left': '//', 'leftAlt': '/*', 'rightAlt': '*/' }}
 " nerd commenter cfg
-nmap <leader>cs <Plug>NERDCommenterInvert
-nmap <leader>cv <Plug>NERDCommenterInvertgv
-nmap <leader>cp vip<Plug>NERDCommenterComment
-nmap <leader>cP vip<Plug>NERDCommenterInvert
+map <silent><leader>cs <Plug>NERDCommenterInvert
+map <silent><leader>cv <Plug>NERDCommenterInvertgv
+map <silent><leader>cp vip<Plug>NERDCommenterComment
+map <silent><leader>cP vip<Plug>NERDCommenterInvert
 
 " NERDTree.vim
 " let g:NERDTreeQuitOnOpen=1
@@ -565,7 +559,7 @@ let g:nerdtree_tabs_open_on_console_startup=0
 let g:nerdtree_tabs_smart_startup_focus=2
 "let g:nerdtree_tabs_focus_on_files=1
 "let g:nerdtree_tabs_autofind=1
-nnoremap <silent><leader>f :NERDTreeTabsToggle<cr>
+nnoremap <silent><f3> :NERDTreeTabsToggle<cr>
 
 " nerdtree-git-plugin.vim
 let g:NERDTreeShowGitStatus = 1
@@ -603,13 +597,7 @@ let g:UltiSnipsJumpBackwardTrigger='<NOP>'
 
 " undotree.vim
 let g:undotree_WindowLayout = 2
-
-" dirdiff.vim
-let g:DirDiffExcludes = "CVS,*.class,*.o"
-let g:DirDiffIgnore = "Id:"
-" ignore white space in diff
-let g:DirDiffAddArgs = "-w"
-let g:DirDiffEnableMappings = 1
+nnoremap <F5> :UndotreeToggle<cr>
 
 " startify
 function! s:list_commits()
@@ -674,9 +662,6 @@ nmap cM :%s/\r$//g<CR>:noh<CR>
 
 " delete SPACE at the end of line
 nmap cm :%s/\s\+$//<CR>:noh<CR>
-
-nmap ci ggVG=
-nmap cy ggVGy
 
 "highlight MyGroup ctermbg=brown guibg=brown
 "au BufWinEnter * let w:m2=matchadd('MyGroup', '\%>' . 80 . 'v.\+', -1)
