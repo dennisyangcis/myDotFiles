@@ -56,7 +56,6 @@ set wildignore+=*/_tmp/*,*/.tmp/*
 set wildignore+=*/_release/*,*/.release/*
 set wildignore+=*/_build/*,*/build/*
 set wildignore+=*/build/*,*/build-*/*
-set wildignore+=*/gen/*,*/lib/*,*/libs/*,*/obj/*
 set wildignore+=*/_repo/*
 " c/cpp
 set wildignore+=*/.so/*,*/.o/*,*/.obj/*,*/.class/*
@@ -170,7 +169,6 @@ Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 " c syntax color
 Plug 'arakashic/chromatica.nvim'
 " python tools
-" Plug 'python-mode/python-mode', { 'branch': 'develop', 'for': ['python'] }
 Plug 'heavenshell/vim-pydocstring', { 'for': 'python'}
 Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python'}
 Plug 'tell-k/vim-autoflake', { 'for': 'python'}
@@ -292,10 +290,13 @@ nmap <silent> <M-j> <Plug>(ale_next_wrap)
 let g:chromatica#enable_at_startup=1
 let g:chromatica#libclang_path = '/usr/lib/libclang.so'
 
-" " py mode
-" let g:pymode_virtualenv = 1
-" let g:pymode_virtualenv_path = $VIRTUAL_ENV
-" let g:pymode_lint = 0   " use ale instead
+" py mode
+let g:pymode_virtualenv = 1
+let g:pymode_virtualenv_path = $VIRTUAL_ENV
+let g:pymode_lint = 0   " use ale instead
+let g:pymode_indent = 0
+let g:pymode_rope = 0
+let g:pymode_syntax = 1
 
 " auto paris cfg, copy from zf_vimrc
 let g:AutoPairsShortcurToggle=''
