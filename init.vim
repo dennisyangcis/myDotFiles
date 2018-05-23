@@ -53,9 +53,8 @@ set wildignore+=*.swp
 set wildignore+=*/_cache/*,*/.cache/*
 set wildignore+=*/_tmp/*,*/.tmp/*
 " build dir
-set wildignore+=*/_release/*,*/.release/*
-set wildignore+=*/_build/*,*/build/*
-set wildignore+=*/build/*,*/build-*/*
+" set wildignore+=*/_release/*,*/.release/*
+" set wildignore+=*/build/*,*/build-*/*
 set wildignore+=*/_repo/*
 " c/cpp
 set wildignore+=*/.so/*,*/.o/*,*/.obj/*,*/.class/*
@@ -312,6 +311,8 @@ let g:AutoPairsCenterLine=0
 let g:AutoPairsMapSpace=0
 let g:AutoPairsFlyMode=0
 let g:AutoPairsMultilineClose=0
+let g:AutoPairs = {'[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
+inoremap <buffer><silent> ) <C-R>=AutoPairsInsert(')')<CR>
 
 " leaderf config
 let g:Lf_CursorBlink = 1
@@ -395,16 +396,17 @@ function! Plugin_CompleteParameter_tab(forward)
     return ''
 endfunction
 function! Plugin_CompleteParameter_setting()
-    inoremap <silent><expr> <cr> pumvisible() ? "\<c-y>" . complete_parameter#pre_complete('') : "\<c-g>u\<cr>"|
+    inoremap <silent><expr> <cr> pumvisible() ? "\<c-y>" . complete_parameter#pre_complete('()') : "\<c-g>u\<cr>"|
     map <c-x> <Plug>(complete_parameter#goto_next_parameter)
     " map <c-u> <Plug>(complete_parameter#goto_previous_parameter)
     imap <silent><expr> <c-x> '' . Plugin_CompleteParameter_tab(1)
     " imap <silent><expr> <c-u> '' . Plugin_CompleteParameter_tab(0)
 endfunction
-augroup ZF_Plugin_CompleteParameter_augroup
+augroup Plugin_CompleteParameter_augroup
     autocmd!
     autocmd FileType * call Plugin_CompleteParameter_setting()
 augroup END
+let g:complete_parameter_use_ultisnips_mapping = 1
 " alrLine Config
 let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
@@ -563,7 +565,7 @@ let g:nerdtree_tabs_smart_startup_focus=2
 nnoremap <silent><f3> :NERDTreeTabsToggle<cr>
 
 " nerdtree-git-plugin.vim
-let g:NERDTreeShowGitStatus = 1
+let g:NERDTreeShowGitStatus = 0
 let g:NERDTreeIndicatorMapCustom = {
 			\ "Modified"  : "✹",
 			\ "Staged"    : "✚",
@@ -592,9 +594,9 @@ nmap <Leader>w <Plug>(easymotion-overwin-w)
 " "ultisnips config
 let g:UltiSnipsEditSplit = "context"
 let g:UltiSnipsSnippetsDir = "~/.vim/plugged/vim-snippets/snippets"
-let g:UltiSnipsExpandTrigger='<NOP>'
-let g:UltiSnipsJumpForwardTrigger='<NOP>'
-let g:UltiSnipsJumpBackwardTrigger='<NOP>'
+let g:UltiSnipsExpandTrigger='<C-j>'
+let g:UltiSnipsJumpForwardTrigger='<C-j>'
+let g:UltiSnipsJumpBackwardTrigger='<C-j>'
 
 " undotree.vim
 let g:undotree_WindowLayout = 2
