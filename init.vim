@@ -102,6 +102,14 @@ func SetTitle()
 endfunc
 autocmd BufNewFile * normal G
 
+if has('persistent_undo')      "check if your vim version supports it
+    if !isdirectory(glob('~/.vim/undo'))
+        exe "!mkdir ~/.vim/undo"
+    endif
+    set undofile                 "turn on the feature  
+    set undodir=$HOME/.vim/undo  "directory where the undo files will be stored
+endif
+
 " some function definition:
 
 " show function names in command line
@@ -266,7 +274,6 @@ let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
 let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
 let g:ale_c_cppcheck_options = ''
 let g:ale_cpp_cppcheck_options = ''
-
 let g:ale_linters = {
             \   'bash': ['shell'],
             \   'sh': ['shell'],
@@ -281,6 +288,17 @@ let g:ale_linters = {
             \   'html': ['tidy'],
             \   'java': ['javac'],
             \}
+function! AleCount()
+    let bn = bufnr('%')
+    let num = ale#statusline#Count(bn)
+    if num['total'] > 1000
+        exe "ALEDisableBuffer"
+    endif
+endfunction
+augroup DisableAle
+    autocmd!
+    autocmd User ALELintPost  call AleCount()
+augroup END
 
 nmap <silent> <M-k> <Plug>(ale_previous_wrap)
 nmap <silent> <M-j> <Plug>(ale_next_wrap)
@@ -311,7 +329,7 @@ let g:AutoPairsCenterLine=0
 let g:AutoPairsMapSpace=0
 let g:AutoPairsFlyMode=0
 let g:AutoPairsMultilineClose=0
-let g:AutoPairs = {'[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
+let g:AutoPairs = {'[':']', '{':'}',"'":"'",'"':'"', '`':'`', '(':')'}
 inoremap <buffer><silent> ) <C-R>=AutoPairsInsert(')')<CR>
 
 " leaderf config
@@ -343,7 +361,14 @@ noremap <c-m> :LeaderfTag<cr>
 " terminal, copy from SPCVim
 let g:pos = 'bottom'
 let g:height = 30
+let s:shell_win_nr = 0
 function OpenShell()
+    if s:shell_win_nr != 0 && getwinvar(s:shell_win_nr, '&buftype') ==# 'terminal' && &buftype !=# 'terminal'
+        exe s:shell_win_nr .  'wincmd w'
+        startinsert
+        return
+    endif
+
     let cmd = g:pos ==# 'top' ?
                 \ 'topleft split' :
                 \ g:pos ==# 'bottom' ?
@@ -358,7 +383,6 @@ function OpenShell()
     if exists(':terminal')
         exe 'terminal'
         let s:shell_win_nr = winnr()
-        let w:shell_layer_win = 1
         setlocal nobuflisted
         startinsert
     else
@@ -396,7 +420,7 @@ function! Plugin_CompleteParameter_tab(forward)
     return ''
 endfunction
 function! Plugin_CompleteParameter_setting()
-    inoremap <silent><expr> <cr> pumvisible() ? "\<c-y>" . complete_parameter#pre_complete('()') : "\<c-g>u\<cr>"|
+    " inoremap <silent><expr> <cr> pumvisible() ? "\<c-y>" . complete_parameter#pre_complete('()') : "\<c-g>u\<cr>"|
     map <c-x> <Plug>(complete_parameter#goto_next_parameter)
     " map <c-u> <Plug>(complete_parameter#goto_previous_parameter)
     imap <silent><expr> <c-x> '' . Plugin_CompleteParameter_tab(1)
@@ -425,18 +449,16 @@ let g:airline#extensions#tabline#fnamecollapse = 2
 let g:airline#extensions#tabline#fnametruncate = 16
 let g:airline#extensions#tabline#formatter = 'default'
 " buffer select
-noremap <A-Left>  :bprevious<CR>
-noremap <A-Right> :bnext<CR>
-noremap <leader>d	:bdelete<CR>
-nmap <leader>1 <Plug>AirlineSelectTab1
-nmap <leader>2 <Plug>AirlineSelectTab2
-nmap <leader>3 <Plug>AirlineSelectTab3
-nmap <leader>4 <Plug>AirlineSelectTab4
-nmap <leader>5 <Plug>AirlineSelectTab5
-nmap <leader>6 <Plug>AirlineSelectTab6
-nmap <leader>7 <Plug>AirlineSelectTab7
-nmap <leader>8 <Plug>AirlineSelectTab8
-nmap <leader>9 <Plug>AirlineSelectTab9
+noremap <silent><leader>d :bp<bar>sp<bar>bn<bar>bd!<CR>
+nmap <silent><leader>1 <Plug>AirlineSelectTab1
+nmap <silent><leader>2 <Plug>AirlineSelectTab2
+nmap <silent><leader>3 <Plug>AirlineSelectTab3
+nmap <silent><leader>4 <Plug>AirlineSelectTab4
+nmap <silent><leader>5 <Plug>AirlineSelectTab5
+nmap <silent><leader>6 <Plug>AirlineSelectTab6
+nmap <silent><leader>7 <Plug>AirlineSelectTab7
+nmap <silent><leader>8 <Plug>AirlineSelectTab8
+nmap <silent><leader>9 <Plug>AirlineSelectTab9
 " ale
 let g:airline#extensions#ale#enabled = 1
 let airline#extensions#ale#error_symbol = 'E:'
@@ -553,13 +575,12 @@ let NERDTreeShowHidden=1
 let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
 let NERDTreeRespectWildIgnore = 1
 let NERDTreeShowBookmarks=1
-" close automatically when it is the last window
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 "  vim-nerdtree-tabs.vim
-let g:nerdtree_tabs_open_on_console_startup=0
+let g:nerdtree_tabs_open_on_console_startup=1
 " always focus file window after startup
 let g:nerdtree_tabs_smart_startup_focus=2
+let g:nerdtree_tabs_autoclose = 1
 "let g:nerdtree_tabs_focus_on_files=1
 "let g:nerdtree_tabs_autofind=1
 nnoremap <silent><f3> :NERDTreeTabsToggle<cr>
@@ -597,7 +618,8 @@ let g:UltiSnipsSnippetsDir = "~/.vim/plugged/vim-snippets/snippets"
 let g:UltiSnipsExpandTrigger='<C-j>'
 let g:UltiSnipsJumpForwardTrigger='<C-j>'
 let g:UltiSnipsJumpBackwardTrigger='<C-j>'
-
+let g:ulti_expand_or_jump_res = 0 "default value, just set once
+inoremap <silent> <M-/> <C-R>=UltiSnips#ExpandSnippetOrJump()<cr>
 " undotree.vim
 let g:undotree_WindowLayout = 2
 nnoremap <F5> :UndotreeToggle<cr>
@@ -635,6 +657,30 @@ hi StartifyNumber  ctermfg=215
 hi StartifyPath    ctermfg=245
 hi StartifySlash   ctermfg=240
 hi StartifySpecial ctermfg=240
+
+" Enter key binding
+let g:ulti_expand_or_jump_res = 0 "default value, just set once
+function! Ulti_ExpandOrJump_and_getRes()
+    call UltiSnips#ExpandSnippetOrJump()
+    return g:ulti_expand_or_jump_res
+endfunction
+inoremap <silent> <M-=> <C-R>=(Ulti_ExpandOrJump_and_getRes() > 0)?"":""<CR>
+
+function! EnterInsert()
+    if pumvisible()
+        return "\<c-y>"
+    elseif getline('.')[col('.') - 2]==#'{'&&getline('.')[col('.')-1]==#'}'
+        return "\<Enter>\<esc>ko"
+    else
+        return "\<Enter>"
+    endif
+endfunction
+imap <silent><expr><CR> EnterInsert()
+
+inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
+inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
+inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
+inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
 
 " Man.vim
 source $VIMRUNTIME/ftplugin/man.vim
