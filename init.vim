@@ -668,7 +668,7 @@ inoremap <silent> <M-=> <C-R>=(Ulti_ExpandOrJump_and_getRes() > 0)?"":""<CR>
 
 function! EnterInsert()
     if pumvisible()
-        return "\<c-y>"
+        return "\<c-y>" . complete_parameter#pre_complete('') . "\<c-y>"
     elseif getline('.')[col('.') - 2]==#'{'&&getline('.')[col('.')-1]==#'}'
         return "\<Enter>\<esc>ko"
     else
