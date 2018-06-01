@@ -161,6 +161,7 @@ Plug 'jsfaint/gen_tags.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'Shougo/echodoc.vim'
+Plug 'wsdjeg/FlyGrep.vim'
 " code completion
 " load YCM
 function! BuildYCM(info)
@@ -178,7 +179,7 @@ Plug 'arakashic/chromatica.nvim'
 " python tools
 Plug 'heavenshell/vim-pydocstring', { 'for': 'python'}
 Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python'}
-Plug 'tell-k/vim-autoflake', { 'for': 'python'}
+" Plug 'tell-k/vim-autoflake', { 'for': 'python'}
 Plug 'plytophogy/vim-virtualenv', { 'for': 'python'}
 Plug 'python-mode/python-mode', { 'branch': 'develop' , 'for': 'python'}
 " others lang
@@ -214,6 +215,12 @@ call plug#end()
 " PLUGIN SETTINGS:
 colorscheme onedark
 
+" fly grep
+nnoremap <M-g> :FlyGrep<cr>
+
+" echodoc
+let g:echodoc#enable_at_startup = 1
+
 " tags
 let $GTAGSLABEL = 'native-pygments'
 let $GTAGSLIBPATH='/usr/include/'
@@ -221,12 +228,13 @@ let g:gen_tags#gtags_auto_gen = 1
 let g:loaded_gentags#gtags = 0
 let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
 let g:gen_tags#ctags_auto_gen = 0
-let g:gen_tags#blacklist = ['/home/yangcis/.vim/plugged/*']
+let g:gen_tags#blacklist = split(glob('~/.vim/plugged/*'))
+let g:gen_tags#blacklist += split(glob('~/.vim/*'))
+
 " let g:gen_tags#verbose = 1
 nmap <leader>gg :GenGTAGS<cr>
 nmap <leader>cg :ClearGTAGS!<cr>
 autocmd User GenTags#GtagsLoaded nnoremap <leader>gd <c-]>
-autocmd filetype c setlocal tags+=/usr/include
 """ short cuts:
 "  Ctrl+\ c    Find functions calling this function
 "  Ctrl+\ d    Find functions called by this function
@@ -314,6 +322,8 @@ let g:pymode_lint = 0   " use ale instead
 let g:pymode_indent = 0
 let g:pymode_rope = 0
 let g:pymode_syntax = 1
+" pep8 indent
+let g:python_pep8_indent_multiline_string = -1
 
 " auto paris cfg, copy from zf_vimrc
 let g:AutoPairsShortcurToggle=''
@@ -505,7 +515,7 @@ let g:airline#extensions#tagbar#flags = 'p'
 
 " choosewin
 " invoke with '-'
-nmap  -  <Plug>(choosewin)
+nmap  <SPACE>  <Plug>(choosewin)
 " use overlay feature
 let g:choosewin_overlay_enable = 1
 " workaround for the overlay font being broken on mutibyte buffer.
