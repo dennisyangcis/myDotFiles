@@ -392,6 +392,8 @@ function OpenShell()
     endif
     if exists(':terminal')
         exe 'terminal'
+        let shell = empty($SHELL) ? 'bash' : $SHELL
+        call term_start(shell, {'curwin': 1, 'term_finish': 'close'})
         let s:shell_win_nr = winnr()
         setlocal nobuflisted
         startinsert
