@@ -392,8 +392,6 @@ function OpenShell()
     endif
     if exists(':terminal')
         exe 'terminal'
-        let shell = empty($SHELL) ? 'bash' : $SHELL
-        call term_start(shell, {'curwin': 1, 'term_finish': 'close'})
         let s:shell_win_nr = winnr()
         setlocal nobuflisted
         startinsert
@@ -402,6 +400,7 @@ function OpenShell()
     endif
 endfunction
 nnoremap <silent><space>; :call OpenShell()<cr>
+tnoremap <Esc> <C-\><C-n>
 
 " vim-easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -432,11 +431,8 @@ function! Plugin_CompleteParameter_tab(forward)
     return ''
 endfunction
 function! Plugin_CompleteParameter_setting()
-    " inoremap <silent><expr> <cr> pumvisible() ? "\<c-y>" . complete_parameter#pre_complete('()') : "\<c-g>u\<cr>"|
     map <c-x> <Plug>(complete_parameter#goto_next_parameter)
-    " map <c-u> <Plug>(complete_parameter#goto_previous_parameter)
     imap <silent><expr> <c-x> '' . Plugin_CompleteParameter_tab(1)
-    " imap <silent><expr> <c-u> '' . Plugin_CompleteParameter_tab(0)
 endfunction
 augroup Plugin_CompleteParameter_augroup
     autocmd!
@@ -577,13 +573,13 @@ map <silent><leader>cP vip<Plug>NERDCommenterInvert
 
 " NERDTree.vim
 " let g:NERDTreeQuitOnOpen=1
-let g:NERDTreeShowLineNumbers=1
-let g:NERDTreeWinPos="left"
-let g:NERDTreeWinSize=30
-let g:NERDTreeMinimalUI=1
+let g:NERDTreeShowLineNumbers=1                
+let g:NERDTreeWinPos="left"                    
+let g:NERDTreeWinSize=30                       
+let g:NERDTreeMinimalUI=1                      
 let g:NERDTreeDirArrows=1   "dir arrow: 1-arrow  0-'+-|'
-let g:NERDTreeAutoCenter=1
-let NERDTreeShowHidden=1
+let g:NERDTreeAutoCenter=1                     
+let NERDTreeShowHidden=1                       
 let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
 let NERDTreeRespectWildIgnore = 1
 let NERDTreeShowBookmarks=1
@@ -591,13 +587,13 @@ let NERDTreeShowBookmarks=1
 "  vim-nerdtree-tabs.vim
 let g:nerdtree_tabs_open_on_console_startup=1
 " always focus file window after startup
-let g:nerdtree_tabs_smart_startup_focus=2
-let g:nerdtree_tabs_autoclose = 1
-"let g:nerdtree_tabs_focus_on_files=1
-"let g:nerdtree_tabs_autofind=1
+let g:nerdtree_tabs_smart_startup_focus=2   
+let g:nerdtree_tabs_autoclose = 1           
+"let g:nerdtree_tabs_focus_on_files=1       
+"let g:nerdtree_tabs_autofind=1             
 nnoremap <silent><f3> :NERDTreeTabsToggle<cr>
-
-" nerdtree-git-plugin.vim
+                                            
+" nerdtree-git-plugin.vim                   
 let g:NERDTreeShowGitStatus = 0
 let g:NERDTreeIndicatorMapCustom = {
 			\ "Modified"  : "✹",
@@ -613,13 +609,13 @@ let g:NERDTreeIndicatorMapCustom = {
 
 "easy-motion config
 "<Leader>s{char} to move to {char}
-map <Leader>s <Plug>(easymotion-bd-f)
-nmap <Leader>s <Plug>(easymotion-overwin-f)
-"s{char}{char} to move to {char}{char}
-nmap s <Plug>(easymotion-overwin-f2)
-" Move to line
-map <Leader>L <Plug>(easymotion-bd-jk)
-nmap <Leader>L <Plug>(easymotion-overwin-line)
+map <Leader>s <Plug>(easymotion-bd-f)          
+nmap <Leader>s <Plug>(easymotion-overwin-f)    
+"s{char}{char} to move to {char}{char}         
+nmap s <Plug>(easymotion-overwin-f2)           
+" Move to line                                 
+map <Leader>L <Plug>(easymotion-bd-jk)         
+nmap <Leader>L <Plug>(easymotion-overwin-line) 
 " Move to word
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
@@ -670,7 +666,7 @@ hi StartifyPath    ctermfg=245
 hi StartifySlash   ctermfg=240
 hi StartifySpecial ctermfg=240
 
-" Enter key binding
+" UltiSnips
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
 function! Ulti_ExpandOrJump_and_getRes()
     call UltiSnips#ExpandSnippetOrJump()
@@ -678,6 +674,7 @@ function! Ulti_ExpandOrJump_and_getRes()
 endfunction
 inoremap <silent> <M-=> <C-R>=(Ulti_ExpandOrJump_and_getRes() > 0)?"":""<CR>
 
+" Enter key binding
 function! EnterInsert()
     if pumvisible()
         return "\<c-y>" . complete_parameter#pre_complete('') . "\<c-y>"
