@@ -170,7 +170,7 @@ function! BuildYCM(info)
 	" - status: 'installed', 'updated', or 'unchanged'
 	" - force:  set on PlugInstall! or PlugUpdate!
 	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --js-completer --java-completer --system-libclang --system-boost
+		!./install.py --clang-completer --js-completer --system-libclang --system-boost
 	endif
 endfunction
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
@@ -183,7 +183,11 @@ Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python'}
 Plug 'plytophogy/vim-virtualenv', { 'for': 'python'}
 Plug 'python-mode/python-mode', { 'branch': 'develop' , 'for': 'python'}
 " others lang
-Plug 'plasticboy/vim-markdown', { 'for': 'markdown'}
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+Plug 'iamcco/mathjax-support-for-mkdp'
+Plug 'iamcco/markdown-preview.vim'
+Plug 'mzlogin/vim-markdown-toc'
 " utils
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'tenfyzhong/CompleteParameter.vim'
@@ -198,8 +202,8 @@ Plug 'Yggdroot/indentLine'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'majutsushi/tagbar',{ 'on': 'TagbarToggle' }
-Plug 'tenfyzhong/tagbar-makefile.vim',{ 'on': 'TagbarToggle' }
-Plug 'lvht/tagbar-markdown',{ 'on': 'TagbarToggle' }
+Plug 'tenfyzhong/tagbar-makefile.vim'
+Plug 'lvht/tagbar-markdown'
 Plug 't9md/vim-choosewin'
 Plug 'joshdick/onedark.vim'
 Plug 'mhinz/vim-startify'
@@ -324,6 +328,10 @@ let g:pymode_rope = 0
 let g:pymode_syntax = 1
 " pep8 indent
 let g:python_pep8_indent_multiline_string = -1
+
+" markdown
+let g:vim_markdown_autowrite = 1
+set conceallevel=2
 
 " auto paris cfg, copy from zf_vimrc
 let g:AutoPairsShortcurToggle=''
