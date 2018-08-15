@@ -521,7 +521,7 @@ let g:airline#extensions#tagbar#flags = 'p'
 
 " choosewin
 " invoke with '-'
-nmap  <SPACE>  <Plug>(choosewin)
+nmap  -  <Plug>(choosewin)
 " use overlay feature
 let g:choosewin_overlay_enable = 1
 " workaround for the overlay font being broken on mutibyte buffer.
