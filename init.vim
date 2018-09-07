@@ -106,7 +106,7 @@ if has('persistent_undo')      "check if your vim version supports it
     if !isdirectory(glob('~/.vim/undo'))
         exe "!mkdir ~/.vim/undo"
     endif
-    set undofile                 "turn on the feature  
+    set undofile                 "turn on the feature
     set undodir=$HOME/.vim/undo  "directory where the undo files will be stored
 endif
 
@@ -121,7 +121,7 @@ fun! ShowFuncName()
 	echohl None
 	call search("\\%" . lnum . "l" . "\\%" . col . "c")
 endfun
-map \ :call ShowFuncName()<CR>
+" map \ :call ShowFuncName()<CR>
 
 " SHORTCUT SETTINGS:
 " Set mapleader
@@ -149,6 +149,15 @@ endif
 " Specify a directory for plugins
 call plug#begin('~/.vim/plugged')
 
+" core
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
+Plug 'tyru/open-browser.vim', {'on': ['OpenBrowserSmartSearch', 'OpenBrowser', 'OpenBrowserSearch']}
+Plug 'jsfaint/gen_tags.vim'
+Plug 'wsdjeg/FlyGrep.vim'
+Plug 'tenfyzhong/CompleteParameter.vim'
+Plug 'w0rp/ale'
+
+" utils
 Plug 'junegunn/vim-easy-align'
 Plug 'Lokaltog/vim-easymotion'
 Plug 'tpope/vim-fugitive'
@@ -157,61 +166,71 @@ Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
 Plug 'tpope/vim-surround'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-unimpaired'
-Plug 'jsfaint/gen_tags.vim'
 Plug 'haya14busa/incsearch.vim'
 Plug 'haya14busa/incsearch-fuzzy.vim'
-Plug 'Shougo/echodoc.vim'
-Plug 'wsdjeg/FlyGrep.vim'
+Plug 'scrooloose/nerdcommenter'
+Plug 'skywind3000/asyncrun.vim'
+Plug 'jiangmiao/auto-pairs'
+
 " code completion
-" load YCM
-function! BuildYCM(info)
-	" info is a dictionary with 3 fields
-	" - name:   name of the plugin
-	" - status: 'installed', 'updated', or 'unchanged'
-	" - force:  set on PlugInstall! or PlugUpdate!
-	if a:info.status == 'installed' || a:info.force
-		!./install.py --clang-completer --js-completer --system-libclang --system-boost
-	endif
-endfunction
-Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
-" c syntax color
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/neoinclude.vim'
+" c
+Plug 'Shougo/deoplete-clangx'
 Plug 'arakashic/chromatica.nvim'
-" python tools
+" python
+Plug 'zchee/deoplete-jedi', {'for': 'python'}
 Plug 'heavenshell/vim-pydocstring', { 'for': 'python'}
 Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python'}
-" Plug 'tell-k/vim-autoflake', { 'for': 'python'}
-Plug 'plytophogy/vim-virtualenv', { 'for': 'python'}
-Plug 'python-mode/python-mode', { 'branch': 'develop' , 'for': 'python'}
-" others lang
+Plug 'tell-k/vim-autoflake'
+
+" markdown
+Plug 'joker1007/vim-markdown-quote-syntax', {'for': 'markdown'}
 Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
-Plug 'iamcco/mathjax-support-for-mkdp'
-Plug 'iamcco/markdown-preview.vim'
-Plug 'mzlogin/vim-markdown-toc'
-" utils
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
-Plug 'tenfyzhong/CompleteParameter.vim'
-Plug 'w0rp/ale'
-Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
-" nerdtree
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeTabsToggle' }
-Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeTabsToggle' }
-Plug 'jistr/vim-nerdtree-tabs', { 'on': 'NERDTreeTabsToggle' }
+Plug 'plasticboy/vim-markdown', {'for': 'markdown'}
+Plug 'iamcco/mathjax-support-for-mkdp', {'for': 'markdown'}
+Plug 'iamcco/markdown-preview.vim', {'for': 'markdown'}
+Plug 'mzlogin/vim-markdown-toc', {'for': 'markdown'}
+Plug 'lvht/tagbar-markdown'
+
+" js
+Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
+Plug 'Galooshi/vim-import-js', {'do': 'npm install -g import-js'}
+Plug 'heavenshell/vim-jsdoc', {'on': 'JsDoc'}
+Plug 'maksimr/vim-jsbeautify', {'for': 'javascript'}
+Plug 'mmalecki/vim-node.js', {'for': 'javascript'}
+Plug 'moll/vim-node', {'for': 'javascript'}
+Plug 'neoclide/vim-jsx-improve', {'for': 'javascript'}
+Plug 'othree/es.next.syntax.vim', {'for': 'javascript'}
+Plug 'othree/javascript-libraries-syntax.vim', {'for': ['javascript', 'coffee', 'ls', 'typescript']}
+
+" html
+Plug 'groenewege/vim-less', {'for': 'less'}
+Plug 'cakebaker/scss-syntax.vim', {'for': ['css', 'scss', 'sass']}
+Plug 'hail2u/vim-css3-syntax', { 'for' : ['css','scss','sass']}
+Plug 'ap/vim-css-color', { 'for' : ['css','scss','sass','less','styl']}
+Plug 'othree/html5.vim', { 'for' : 'html'}
+Plug 'wavded/vim-stylus', { 'for' : 'stylus'}
+Plug 'mattn/emmet-vim', { 'on' : 'EmmetInstall'}
+
+" java
+Plug 'vim-jp/vim-java', { 'for' : 'java'}
+Plug 'artur-shaik/vim-javacomplete2', { 'for' : ['java', 'jsp']}
+
+" viml
+Plug 'Shougo/neco-vim'
+
 " UI
+Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Yggdroot/indentLine'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'majutsushi/tagbar',{ 'on': 'TagbarToggle' }
 Plug 'tenfyzhong/tagbar-makefile.vim'
-Plug 'lvht/tagbar-markdown'
 Plug 't9md/vim-choosewin'
 Plug 'joshdick/onedark.vim'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons' " file icons
-
-Plug 'scrooloose/nerdcommenter'
-Plug 'skywind3000/asyncrun.vim'
-Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 " setup end
@@ -220,10 +239,7 @@ call plug#end()
 colorscheme onedark
 
 " fly grep
-nnoremap <M-g> :FlyGrep<cr>
-
-" echodoc
-let g:echodoc#enable_at_startup = 1
+nnoremap fg :FlyGrep<cr>
 
 " tags
 let $GTAGSLABEL = 'native-pygments'
@@ -251,28 +267,31 @@ autocmd User GenTags#GtagsLoaded nnoremap <leader>gd <c-]>
 """
 
 " code completion
-" ycm
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_server_log_level = 'info'
-let g:ycm_complete_in_comments=1
-let g:ycm_complete_in_strings=1
-let g:ycm_collect_identifiers_from_comments_and_strings=1
-let g:ycm_confirm_extra_conf=0
-let g:ycm_global_ycm_extra_conf = '~/codes/.ycm_extra_conf.py'
-let g:ycm_key_list_select_completion = ['<Down>']
-let g:ycm_key_list_previous_completion = ['<Up>']
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_python_binary_path = 'python'
-let g:ycm_semantic_triggers =  {
-            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-            \ 'cs,lua,javascript': ['re!\w{2}'],
-            \ }
-nnoremap <leader>gt  :YcmCompleter GoTo<CR>
-nnoremap <leader>gd  :YcmCompleter GoToDefinition<CR>
-nnoremap <leader>gi  :YcmCompleter GoToInclude<CR>
-nnoremap <leader>gr  :YcmCompleter GoToReferences<CR>
-nnoremap <leader>gf  :YcmCompleter GoToDeclaration<CR>
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_ignore_case = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_camel_case = 1
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#max_abbr_width = 0
+let g:deoplete#max_menu_width = 0
+
+"
+let g:jedi#completions_enabled = 0
+
+" html
+let g:user_emmet_leader_key=get(g:, 'user_emmet_leader_key', '<C-e>')
+augroup lang_html
+    autocmd!
+    autocmd FileType html,css,scss,sass,less,javascript,jsp,vue,eex call s:install_emmet()
+    autocmd Filetype html setlocal omnifunc=htmlcomplete#CompleteTags
+augroup END
+function! s:install_emmet() abort
+  try
+    EmmetInstall
+  catch
+
+  endtry
+endfunction
 
 " syntax check
 let g:ale_linters_explicit = 1
@@ -319,13 +338,6 @@ nmap <silent> <M-j> <Plug>(ale_next_wrap)
 let g:chromatica#enable_at_startup=1
 let g:chromatica#libclang_path = '/usr/lib/libclang.so'
 
-" py mode
-let g:pymode_virtualenv = 1
-let g:pymode_virtualenv_path = $VIRTUAL_ENV
-let g:pymode_lint = 0   " use ale instead
-let g:pymode_indent = 0
-let g:pymode_rope = 0
-let g:pymode_syntax = 1
 " pep8 indent
 let g:python_pep8_indent_multiline_string = -1
 
@@ -353,7 +365,7 @@ inoremap <buffer><silent> ) <C-R>=AutoPairsInsert(')')<CR>
 " leaderf config
 let g:Lf_CursorBlink = 1
 let g:Lf_StlSeparator = { 'left': '', 'right': '' }
-let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git', '.hg', '.ycm_extra_conf.py']
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git', '.hg']
 let g:Lf_WorkingDirectoryMode = 'Ac'
 let g:Lf_WindowHeight = 0.30
 let g:Lf_CacheDirectory = expand('~/.vim/cache/leaderf')
@@ -369,12 +381,16 @@ let g:Lf_NormalMap = {
             \ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
             \ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
             \ }
-let g:Lf_ShortcutF = '<C-p>'
-let g:Lf_ShortcutB = '<C-b>'
-noremap <c-l> :LeaderfMru<cr>
-noremap <m-l> :LeaderfFunction!<cr>
-noremap <m-h> :LeaderfBuffer<cr>
-noremap <c-m> :LeaderfTag<cr>
+let g:Lf_WildIgnore = {
+            \ 'dir': ['.svn','.git','.hg'],
+            \ 'file': ['*.sw?','~$*','*.bak','*.exe','*.o','*.so','*.py[co]']
+            \}
+noremap <leader>m :LeaderfMru<cr>
+" noremap <leader>f :LeaderfFile<cr>
+noremap <leader>c :LeaderfFunction!<cr>
+" noremap <leader>b :LeaderfBuffer<cr>
+" noremap <leader>t :LeaderfTag<cr>
+noremap <leader>o :LeaderfColorscheme<cr>
 
 " terminal, copy from SPCVim
 let g:pos = 'bottom'
@@ -519,6 +535,48 @@ let g:airline#extensions#tagbar#flags = 'f'
 let g:airline#extensions#tagbar#flags = 's'
 let g:airline#extensions#tagbar#flags = 'p'
 
+" defx
+nnoremap <silent><F2> :Defx<CR>
+autocmd FileType defx call s:defx_my_settings()
+function! s:defx_my_settings() abort
+    " Define mappings
+    nnoremap <silent><buffer><expr> <CR>
+                \ defx#do_action('open')
+    nnoremap <silent><buffer><expr> l
+                \ defx#do_action('open')
+    nnoremap <silent><buffer><expr> E
+                \ defx#do_action('open', 'vsplit')
+    nnoremap <silent><buffer><expr> P
+                \ defx#do_action('open', 'pedit')
+    nnoremap <silent><buffer><expr> K
+                \ defx#do_action('new_directory')
+    nnoremap <silent><buffer><expr> N
+                \ defx#do_action('new_file')
+    nnoremap <silent><buffer><expr> d
+                \ defx#do_action('remove')
+    nnoremap <silent><buffer><expr> r
+                \ defx#do_action('rename')
+    nnoremap <silent><buffer><expr> h
+                \ defx#do_action('cd', ['..'])
+    nnoremap <silent><buffer><expr> ~
+                \ defx#do_action('cd')
+    nnoremap <silent><buffer><expr> q
+                \ defx#do_action('quit') . ':bd' . "\<cr>"
+    nnoremap <silent><buffer><expr> <Space>
+                \ defx#do_action('toggle_select') . 'j'
+    nnoremap <silent><buffer><expr> *
+                \ defx#do_action('toggle_select_all')
+    nnoremap <silent><buffer><expr> j
+                \ line('.') == line('$') ? 'gg' : 'j'
+    nnoremap <silent><buffer><expr> k
+                \ line('.') == 1 ? 'G' : 'k'
+    nnoremap <silent><buffer><expr> <C-l>
+                \ defx#do_action('redraw')
+    nnoremap <silent><buffer><expr> <C-g>
+                \ defx#do_action('print')
+endfunction
+
+
 " choosewin
 " invoke with '-'
 nmap  -  <Plug>(choosewin)
@@ -555,7 +613,7 @@ let g:tagbar_map_closeallfolds='X'
 let g:tagbar_map_togglesort=''
 let g:tagbar_map_toggleautoclose=''
 let g:tagbar_map_zoomwin=''
-nnoremap <silent><f2> :TagbarToggle<cr>
+nnoremap <silent><F3> :TagbarToggle<cr>
 
 " nerd-commenter, copy from SpaceVim
 let g:NERDSpaceDelims = 1
@@ -579,51 +637,15 @@ map <silent><leader>cv <Plug>NERDCommenterInvertgv
 map <silent><leader>cp vip<Plug>NERDCommenterComment
 map <silent><leader>cP vip<Plug>NERDCommenterInvert
 
-" NERDTree.vim
-" let g:NERDTreeQuitOnOpen=1
-let g:NERDTreeShowLineNumbers=1                
-let g:NERDTreeWinPos="left"                    
-let g:NERDTreeWinSize=30                       
-let g:NERDTreeMinimalUI=1                      
-let g:NERDTreeDirArrows=1   "dir arrow: 1-arrow  0-'+-|'
-let g:NERDTreeAutoCenter=1                     
-let NERDTreeShowHidden=1                       
-let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
-let NERDTreeRespectWildIgnore = 1
-let NERDTreeShowBookmarks=1
-
-"  vim-nerdtree-tabs.vim
-let g:nerdtree_tabs_open_on_console_startup=1
-" always focus file window after startup
-let g:nerdtree_tabs_smart_startup_focus=2   
-let g:nerdtree_tabs_autoclose = 1           
-"let g:nerdtree_tabs_focus_on_files=1       
-"let g:nerdtree_tabs_autofind=1             
-nnoremap <silent><f3> :NERDTreeTabsToggle<cr>
-                                            
-" nerdtree-git-plugin.vim                   
-let g:NERDTreeShowGitStatus = 0
-let g:NERDTreeIndicatorMapCustom = {
-			\ "Modified"  : "✹",
-			\ "Staged"    : "✚",
-			\ "Untracked" : "✭",
-			\ "Renamed"   : "➜",
-			\ "Unmerged"  : "═",
-			\ "Deleted"   : "✖",
-			\ "Dirty"     : "✗",
-			\ "Clean"     : "✔︎",
-			\ "Unknown"   : "?"
-			\ }
-
 "easy-motion config
 "<Leader>s{char} to move to {char}
-map <Leader>s <Plug>(easymotion-bd-f)          
-nmap <Leader>s <Plug>(easymotion-overwin-f)    
-"s{char}{char} to move to {char}{char}         
-nmap s <Plug>(easymotion-overwin-f2)           
-" Move to line                                 
-map <Leader>L <Plug>(easymotion-bd-jk)         
-nmap <Leader>L <Plug>(easymotion-overwin-line) 
+map <Leader>s <Plug>(easymotion-bd-f)
+nmap <Leader>s <Plug>(easymotion-overwin-f)
+"s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)
+" Move to line
+map <Leader>L <Plug>(easymotion-bd-jk)
+nmap <Leader>L <Plug>(easymotion-overwin-line)
 " Move to word
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
