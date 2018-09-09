@@ -65,6 +65,13 @@ set wildmode=list:longest,full
 set wrap
 set t_Co=256
 
+if has('linux')
+    let g:clang_path = '/usr/lib/libclang.so'
+elseif has('mac')
+    let g:clang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
+    let g:clang_header = '/Library/Developer/CommandLineTools/usr/lib/clang'
+endif
+
 " open file at last postion
 autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") |
@@ -176,7 +183,8 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/neoinclude.vim'
 " c
-Plug 'Shougo/deoplete-clangx'
+" Plug 'Shougo/deoplete-clangx'
+Plug 'zchee/deoplete-clang'
 Plug 'arakashic/chromatica.nvim'
 " python
 Plug 'zchee/deoplete-jedi', {'for': 'python'}
@@ -187,7 +195,7 @@ Plug 'tell-k/vim-autoflake'
 " markdown
 Plug 'joker1007/vim-markdown-quote-syntax', {'for': 'markdown'}
 Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown', {'for': 'markdown'}
+Plug 'plasticboy/vim-markdown'
 Plug 'iamcco/mathjax-support-for-mkdp', {'for': 'markdown'}
 Plug 'iamcco/markdown-preview.vim', {'for': 'markdown'}
 Plug 'mzlogin/vim-markdown-toc', {'for': 'markdown'}
@@ -235,7 +243,7 @@ Plug 'ryanoasis/vim-devicons' " file icons
 call plug#end()
 " setup end
 
-" PLUGIN SETTINGS:
+" PLUGIN SETTINGS
 colorscheme onedark
 
 " fly grep
@@ -274,6 +282,7 @@ let g:deoplete#enable_camel_case = 1
 let g:deoplete#enable_refresh_always = 1
 let g:deoplete#max_abbr_width = 0
 let g:deoplete#max_menu_width = 0
+autocmd CompleteDone * silent! pclose!
 
 "
 let g:jedi#completions_enabled = 0
@@ -313,9 +322,9 @@ let g:ale_linters = {
             \   'spec': [],
             \   'text': [],
             \   'zsh': ['shell'],
-            \   'c': ['cppcheck', 'gcc'],
+            \   'c': ['cppcheck', 'gcc', 'clang'],
             \   'javascript': ['eslint'],
-            \   'markdown': ['mdl'],
+            \   'markdown': ['markdownlint'],
             \   'html': ['tidy'],
             \   'java': ['javac'],
             \}
@@ -331,19 +340,25 @@ augroup DisableAle
     autocmd User ALELintPost  call AleCount()
 augroup END
 
-nmap <silent> <M-k> <Plug>(ale_previous_wrap)
-nmap <silent> <M-j> <Plug>(ale_next_wrap)
+nmap <silent> <leader>z <Plug>(ale_previous_wrap)
+nmap <silent> <leader>x <Plug>(ale_next_wrap)
 
 " c-family color
 let g:chromatica#enable_at_startup=1
-let g:chromatica#libclang_path = '/usr/lib/libclang.so'
+let g:chromatica#libclang_path = g:clang_path
+
+let g:deoplete#sources#clang#libclang_path = g:clang_path
+let g:deoplete#sources#clang#clang_header = g:clang_header
 
 " pep8 indent
 let g:python_pep8_indent_multiline_string = -1
 
 " markdown
-let g:vim_markdown_autowrite = 1
-set conceallevel=2
+" let g:vim_markdown_autowrite = 1
+let g:vim_markdown_folding_disabled = 1
+set conceallevel=0
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_frontmatter=1
 
 " auto paris cfg, copy from zf_vimrc
 let g:AutoPairsShortcurToggle=''
@@ -463,6 +478,7 @@ augroup Plugin_CompleteParameter_augroup
     autocmd FileType * call Plugin_CompleteParameter_setting()
 augroup END
 let g:complete_parameter_use_ultisnips_mapping = 1
+let g:complete_parameter_log_level = 1
 " alrLine Config
 let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
@@ -650,14 +666,22 @@ nmap <Leader>L <Plug>(easymotion-overwin-line)
 map  <Leader>w <Plug>(easymotion-bd-w)
 nmap <Leader>w <Plug>(easymotion-overwin-w)
 
-" "ultisnips config
+" ultisnips config
 let g:UltiSnipsEditSplit = "context"
 let g:UltiSnipsSnippetsDir = "~/.vim/plugged/vim-snippets/snippets"
-let g:UltiSnipsExpandTrigger='<C-j>'
+" let g:UltiSnipsExpandTrigger='<C-j>'
 let g:UltiSnipsJumpForwardTrigger='<C-j>'
 let g:UltiSnipsJumpBackwardTrigger='<C-j>'
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
-inoremap <silent> <M-/> <C-R>=UltiSnips#ExpandSnippetOrJump()<cr>
+inoremap <silent> <leader>q <C-R>=UltiSnips#ExpandSnippetOrJump()<cr>
+
+let g:ulti_expand_or_jump_res = 0 "default value, just set once
+function! Ulti_ExpandOrJump_and_getRes()
+    call UltiSnips#ExpandSnippetOrJump()
+    return g:ulti_expand_or_jump_res
+endfunction
+inoremap <silent> <leader>a <C-R>=(Ulti_ExpandOrJump_and_getRes() > 0)?"":""<CR>
+
 " undotree.vim
 let g:undotree_WindowLayout = 2
 nnoremap <F5> :UndotreeToggle<cr>
@@ -696,18 +720,10 @@ hi StartifyPath    ctermfg=245
 hi StartifySlash   ctermfg=240
 hi StartifySpecial ctermfg=240
 
-" UltiSnips
-let g:ulti_expand_or_jump_res = 0 "default value, just set once
-function! Ulti_ExpandOrJump_and_getRes()
-    call UltiSnips#ExpandSnippetOrJump()
-    return g:ulti_expand_or_jump_res
-endfunction
-inoremap <silent> <M-=> <C-R>=(Ulti_ExpandOrJump_and_getRes() > 0)?"":""<CR>
-
 " Enter key binding
 function! EnterInsert()
     if pumvisible()
-        return "\<c-y>" . complete_parameter#pre_complete('') . "\<c-y>"
+        return "\<C-y>" . cmp#pre_complete("") . "\<C-y>"
     elseif getline('.')[col('.') - 2]==#'{'&&getline('.')[col('.')-1]==#'}'
         return "\<Enter>\<esc>ko"
     else
