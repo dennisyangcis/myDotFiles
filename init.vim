@@ -65,36 +65,13 @@ set wildmode=list:longest,full
 set wrap
 set t_Co=256
 
-let g:mac_flag=0
-let g:win_flag=0
-let g:linux_flag=0
-
-if has('unix')
-    if has('mac')
-        " in mac
-        let g:mac_flag=1
-    else
-        " in linux
-        let g:linux_flag=1
-    endif
-elseif (has('win32') || has('win64') || has('win95') || has('win16'))
-    let g:win_flag=1
-endif
-
-if g:mac_flag==1
-    " in mac
+if has('linux')
+    let g:clang_path = '/usr/lib/libclang.so'
+elseif has('mac')
     let g:clang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
     let g:clang_header = '/Library/Developer/CommandLineTools/usr/lib/clang'
-elseif g:linux_flag==1
-    " in linux
-    let g:clang_path = '/usr/lib/libclang.so'
-    let g:clang_header = '/usr/lib/clang'
-elseif g:win_flag==1
-    let g:python_host_prog = 'C:\Python27amd64\python.exe'
-    let g:python3_host_prog = 'C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python36_64\python.exe'
-    let g:clang_path = 'C:\Program Files\LLVM\lib\libclang.lib'
-    let g:clang_header = 'C:\Program Files\LLVM\lib\clang'
 endif
+
 " open file at last postion
 autocmd BufReadPost *
     \ if line("'\"") > 1 && line("'\"") <= line("$") |
@@ -170,22 +147,17 @@ nnoremap <C-left>  <C-W>h
 nnoremap <C-right>  <C-W>l
 
 " start vim-plug
-if g:mac_flag==1 || g:linux_flag==1
-    if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-        silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-                    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-    endif
+if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+
 " Specify a directory for plugins
 call plug#begin('~/.vim/plugged')
 
 " core
-if g:win_flag==1
-    Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' }
-else
-    Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
-endif
+Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'tyru/open-browser.vim', {'on': ['OpenBrowserSmartSearch', 'OpenBrowser', 'OpenBrowserSearch']}
 Plug 'jsfaint/gen_tags.vim'
 Plug 'wsdjeg/FlyGrep.vim'
