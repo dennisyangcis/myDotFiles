@@ -65,11 +65,14 @@ set wildmode=list:longest,full
 set wrap
 set t_Co=256
 
-if has('linux')
-    let g:clang_path = '/usr/lib/libclang.so'
-elseif has('mac')
-    let g:clang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
-    let g:clang_header = '/Library/Developer/CommandLineTools/usr/lib/clang'
+if has('unix')
+    if !has('mac')
+        let g:clang_path = '/usr/lib/libclang.so'
+        let g:clang_header = '/usr/lib/clang'
+    else
+        let g:clang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
+        let g:clang_header = '/Library/Developer/CommandLineTools/usr/lib/clang'
+    endif
 endif
 
 " open file at last postion
@@ -178,6 +181,7 @@ Plug 'haya14busa/incsearch-fuzzy.vim'
 Plug 'scrooloose/nerdcommenter'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'jiangmiao/auto-pairs'
+Plug 'Shougo/echodoc.vim'
 
 " code completion
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -284,10 +288,22 @@ let g:deoplete#max_abbr_width = 0
 let g:deoplete#max_menu_width = 0
 autocmd CompleteDone * silent! pclose!
 
-"
-let g:jedi#completions_enabled = 0
+" <c>
+let b:neoinclude_paths = '.,/usr/include,,'
 
-" html
+" <python>
+let g:jedi#completions_enabled = 0
+" If you execute :Pydocstring at no `def`, `class` line.
+" g:pydocstring_enable_comment enable to put comment.txt value.
+let g:pydocstring_enable_comment = 0
+
+" Disable this option to prevent pydocstring from creating any
+" key mapping to the `:Pydocstring` command.
+" Note: this value is overridden if you explicitly create a
+" mapping in your vimrc, such as if you do:
+let g:pydocstring_enable_mapping = 0
+
+" <html>
 let g:user_emmet_leader_key=get(g:, 'user_emmet_leader_key', '<C-e>')
 augroup lang_html
     autocmd!
@@ -298,9 +314,71 @@ function! s:install_emmet() abort
   try
     EmmetInstall
   catch
-
   endtry
 endfunction
+
+" <java>
+augroup lang_java
+    au!
+    autocmd FileType java setlocal omnifunc=javacomplete#Complete
+    autocmd FileType java call s:java_mappings()
+augroup END
+
+function! s:java_mappings() abort
+    inoremap <silent> <buffer> <leader>UU <esc>bgUwea
+    inoremap <silent> <buffer> <leader>uu <esc>bguwea
+    inoremap <silent> <buffer> <leader>ua <esc>bgulea
+    inoremap <silent> <buffer> <leader>Ua <esc>bgUlea
+    nmap <silent><buffer> <F4> <Plug>(JavaComplete-Imports-Add)
+    imap <silent><buffer> <F4> <Plug>(JavaComplete-Imports-Add)
+
+    imap <silent><buffer> <C-j>I <Plug>(JavaComplete-Imports-AddMissing)
+    imap <silent><buffer> <C-j>R <Plug>(JavaComplete-Imports-RemoveUnused)
+    imap <silent><buffer> <C-j>i <Plug>(JavaComplete-Imports-AddSmart)
+    imap <silent><buffer> <C-j>s <Plug>(JavaComplete-Generate-AccessorSetter)
+    imap <silent><buffer> <C-j>g <Plug>(JavaComplete-Generate-AccessorGetter)
+    imap <silent><buffer> <C-j>a <Plug>(JavaComplete-Generate-AccessorSetterGetter)
+    imap <silent><buffer> <C-j>jM <Plug>(JavaComplete-Generate-AbstractMethods)
+endfunction
+
+" <javascript>
+let g:javascript_plugin_jsdoc = 1
+let g:javascript_plugin_flow = 1
+
+augroup lang_js
+    au!
+    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+    autocmd FileType javascript call s:js_mappings()
+augroup END
+
+function! s:js_mappings() abort
+    nnoremap <silent><buffer> <F4> :ImportJSWord<CR>
+    nnoremap <silent><buffer> <Leader>ji :ImportJSWord<CR>
+    nnoremap <silent><buffer> <Leader>jf :ImportJSFix<CR>
+    nnoremap <silent><buffer> <Leader>jg :ImportJSGoto<CR>
+
+    inoremap <silent><buffer> <F4> <Esc>:ImportJSWord<CR>a
+    inoremap <silent><buffer> <C-j>i <Esc>:ImportJSWord<CR>a
+    inoremap <silent><buffer> <C-j>f <Esc>:ImportJSFix<CR>a
+    inoremap <silent><buffer> <C-j>g <Esc>:ImportJSGoto<CR>a
+
+    " Allow prompt for interactive input.
+    let g:jsdoc_allow_input_prompt = 1
+    " Prompt for a function description
+    let g:jsdoc_input_description = 1
+    " Set value to 1 to turn on detecting underscore starting functions as private convention
+    let g:jsdoc_underscore_private = 1
+    " Enable to use ECMAScript6's Shorthand function, Arrow function.
+    let g:jsdoc_enable_es6 = 1
+endfunction
+
+" asyncrun
+let g:asyncrun_open = 6
+let g:asyncrun_bell = 1
+" for python running current script.
+nnoremap <F7> :AsyncRun -raw python3 %<CR>
+nnoremap <F8> :call asyncrun#quickfix_toggle(6)<CR>
+let g:asyncrun_rootmarks = ['.svn', '.git', '.root'] 
 
 " syntax check
 let g:ale_linters_explicit = 1
@@ -670,8 +748,8 @@ nmap <Leader>w <Plug>(easymotion-overwin-w)
 let g:UltiSnipsEditSplit = "context"
 let g:UltiSnipsSnippetsDir = "~/.vim/plugged/vim-snippets/snippets"
 " let g:UltiSnipsExpandTrigger='<C-j>'
-let g:UltiSnipsJumpForwardTrigger='<C-j>'
-let g:UltiSnipsJumpBackwardTrigger='<C-j>'
+" let g:UltiSnipsJumpForwardTrigger='<C-j>'
+" let g:UltiSnipsJumpBackwardTrigger='<C-j>'
 let g:ulti_expand_or_jump_res = 0 "default value, just set once
 inoremap <silent> <leader>q <C-R>=UltiSnips#ExpandSnippetOrJump()<cr>
 
