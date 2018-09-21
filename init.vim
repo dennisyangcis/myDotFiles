@@ -10,38 +10,48 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " settings.
-set   autowrite
-set   background=dark
-set   nobackup
-set   cindent
-set   cinoptions=:0
-set   fileencodings=utf-8,gb2312,gbk,gb18030
-set   fileformat=unix
-set   foldenable
-set   foldmethod=manual
-set   foldlevel=128
-set   helpheight=10
-set   helplang=cn
-set   hidden
-set   ignorecase
-set   mouse=v
-set   number
-set   pumheight=10
-set   ruler
-set   scrolloff=2
-set   showcmd
-set   smartindent
-set   smartcase
+set autowrite
+set background=dark
+set nobackup
+set cindent
+set cinoptions=:0
+set fileencodings=utf-8,gb2312,gbk,gb18030
+set fileformat=unix
+set foldenable
+set foldmethod=indent
+set foldlevel=128
+set helpheight=10
+set helplang=cn
+set hidden
+set ignorecase
+set mouse=v
+set number
+set pumheight=10
+set ruler
+set scrolloff=2
+set showcmd
+set smartindent
+set smartcase
 " expand 1 tab to 4 spaces
-set   expandtab
-set   tabstop=4
-set   shiftwidth=4
+set expandtab
+set tabstop=4
+set shiftwidth=4
 
-set   termencoding=utf-8
-set   textwidth=80
-set   wrap
-set   whichwrap=<,>,[,]
-set   noshowmode
+set noswapfile
+
+" share system clipboard
+set clipboard=unnamedplus " When possible use + register for copy-paste
+
+"cursor line
+set linespace=2
+set cursorline
+
+set termencoding=utf-8
+set textwidth=80
+set wrap
+set whichwrap=<,>,[,]
+set completeopt-=preview
+set noshowmode
 " global ignore
 set wildignore=
 "common
@@ -253,6 +263,9 @@ colorscheme onedark
 " fly grep
 nnoremap fg :FlyGrep<cr>
 
+" echodoc
+let g:echodoc#enable_at_startup = 1
+
 " tags
 let $GTAGSLABEL = 'native-pygments'
 let $GTAGSLIBPATH='/usr/include/'
@@ -286,7 +299,7 @@ let g:deoplete#enable_camel_case = 1
 let g:deoplete#enable_refresh_always = 1
 let g:deoplete#max_abbr_width = 0
 let g:deoplete#max_menu_width = 0
-autocmd CompleteDone * silent! pclose!
+" autocmd CompleteDone * silent! pclose!
 
 " <c>
 let b:neoinclude_paths = '.,/usr/include,,'
@@ -423,6 +436,7 @@ nmap <silent> <leader>x <Plug>(ale_next_wrap)
 
 " c-family color
 let g:chromatica#enable_at_startup=1
+let g:chromatica#responsive_mode = 1
 let g:chromatica#libclang_path = g:clang_path
 
 let g:deoplete#sources#clang#libclang_path = g:clang_path
@@ -556,7 +570,7 @@ augroup Plugin_CompleteParameter_augroup
     autocmd FileType * call Plugin_CompleteParameter_setting()
 augroup END
 let g:complete_parameter_use_ultisnips_mapping = 1
-let g:complete_parameter_log_level = 1
+" let g:complete_parameter_log_level = 1
 " alrLine Config
 let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
@@ -822,22 +836,14 @@ source $VIMRUNTIME/ftplugin/man.vim
 nmap <C-\>a :Man <C-R>=expand("<cword>")<cr><cr>
 nmap <C-\>2 :Man 2 <C-R>=expand("<cword>")<cr><cr>
 
+" quickfix close shortcut
+autocmd FileType qf noremap <buffer> q :close<CR>
+
 " window-resize
 nmap w= :res +5<CR>
 nmap w- :res -5<CR>
 nmap w, :vertical res +10<CR>
 nmap w. :vertical res -10<CR>
-
-""""""""""""""""""""""""""""""""""""
-"
-set noswapfile
-
-" share system clipboard
-set clipboard=unnamedplus " When possible use + register for copy-paste
-
-"cursor line
-set linespace=2
-set cursorline
 
 " clear  ^M at the end of line in normal mode
 nmap cM :%s/\r$//g<CR>:noh<CR>
