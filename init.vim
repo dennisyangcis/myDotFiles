@@ -261,7 +261,8 @@ call plug#end()
 colorscheme onedark
 
 " fly grep
-nnoremap fg :FlyGrep<cr>
+nnoremap fg :FlyGrep<CR>
+" nnoremap ff :call GrepCword()
 
 " echodoc
 let g:echodoc#enable_at_startup = 1
@@ -305,6 +306,10 @@ let g:deoplete#max_menu_width = 0
 let b:neoinclude_paths = '.,/usr/include,,'
 
 " <python>
+augroup lang_python
+    au!
+    autocmd FileType python nnoremap <F7> :AsyncRun -raw python3 %<CR>
+augroup END
 let g:jedi#completions_enabled = 0
 " If you execute :Pydocstring at no `def`, `class` line.
 " g:pydocstring_enable_comment enable to put comment.txt value.
@@ -333,6 +338,7 @@ endfunction
 " <java>
 augroup lang_java
     au!
+    autocmd FileType java nnoremap <F7> :AsyncRun -raw javac %; java %:r<CR>
     autocmd FileType java setlocal omnifunc=javacomplete#Complete
     autocmd FileType java call s:java_mappings()
 augroup END
@@ -388,9 +394,7 @@ endfunction
 " asyncrun
 let g:asyncrun_open = 6
 let g:asyncrun_bell = 1
-" for python running current script.
-nnoremap <F7> :AsyncRun -raw python3 %<CR>
-nnoremap <F8> :call asyncrun#quickfix_toggle(6)<CR>
+nnoremap <silent> <F8> :call asyncrun#quickfix_toggle(6)<CR>
 let g:asyncrun_rootmarks = ['.svn', '.git', '.root'] 
 
 " syntax check
