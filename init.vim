@@ -648,12 +648,20 @@ let g:airline#extensions#tagbar#flags = 's'
 let g:airline#extensions#tagbar#flags = 'p'
 
 " defx
-nnoremap <silent><F2> :Defx<CR>
+nnoremap <silent><F2> :Defx -split=vertical -winwidth=30 -direction=topleft -toggle=true<CR>
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
     " Define mappings
     nnoremap <silent><buffer><expr> <CR>
-                \ defx#do_action('open')
+                \ defx#do_action('open', 'wincmd w \| drop')
+    " nnoremap <silent><buffer><expr> <CR>
+    " \ defx#do_action('open')
+    nnoremap <silent><buffer><expr> c
+                \ defx#do_action('copy')
+    nnoremap <silent><buffer><expr> m
+                \ defx#do_action('move')
+    nnoremap <silent><buffer><expr> p
+                \ defx#do_action('paste')
     nnoremap <silent><buffer><expr> l
                 \ defx#do_action('open')
     nnoremap <silent><buffer><expr> E
@@ -668,6 +676,10 @@ function! s:defx_my_settings() abort
                 \ defx#do_action('remove')
     nnoremap <silent><buffer><expr> r
                 \ defx#do_action('rename')
+    nnoremap <silent><buffer><expr> x
+                \ defx#do_action('execute_system')
+    nnoremap <silent><buffer><expr> .
+                \ defx#do_action('toggle_ignored_files')
     nnoremap <silent><buffer><expr> h
                 \ defx#do_action('cd', ['..'])
     nnoremap <silent><buffer><expr> ~
