@@ -77,8 +77,8 @@ set t_Co=256
 
 if has('unix')
     if !has('mac')
-        let g:clang_path = '/usr/lib/libclang.so'
-        let g:clang_header = '/usr/lib/clang'
+        let g:clang_path = '/usr/lib/llvm-6.0/lib/libclang.so'
+        let g:clang_header = '/usr/lib/clang/6.0'
     else
         let g:clang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
         let g:clang_header = '/Library/Developer/CommandLineTools/usr/lib/clang'
@@ -243,7 +243,9 @@ Plug 'artur-shaik/vim-javacomplete2', { 'for' : ['java', 'jsp']}
 Plug 'Shougo/neco-vim'
 
 " UI
-Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeTabsToggle' }
+Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeTabsToggle' }
+Plug 'jistr/vim-nerdtree-tabs', { 'on': 'NERDTreeTabsToggle' }
 Plug 'Yggdroot/indentLine'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -647,59 +649,40 @@ let g:airline#extensions#tagbar#flags = 'f'
 let g:airline#extensions#tagbar#flags = 's'
 let g:airline#extensions#tagbar#flags = 'p'
 
-" defx
-nnoremap <silent><F2> :Defx -split=vertical -winwidth=30 -direction=topleft -toggle=true<CR>
-autocmd FileType defx call s:defx_my_settings()
-function! s:defx_my_settings() abort
-    " Define mappings
-    nnoremap <silent><buffer><expr> <CR>
-                \ defx#do_action('open', 'wincmd w \| drop')
-    " nnoremap <silent><buffer><expr> <CR>
-    " \ defx#do_action('open')
-    nnoremap <silent><buffer><expr> c
-                \ defx#do_action('copy')
-    nnoremap <silent><buffer><expr> m
-                \ defx#do_action('move')
-    nnoremap <silent><buffer><expr> p
-                \ defx#do_action('paste')
-    nnoremap <silent><buffer><expr> l
-                \ defx#do_action('open')
-    nnoremap <silent><buffer><expr> E
-                \ defx#do_action('open', 'vsplit')
-    nnoremap <silent><buffer><expr> P
-                \ defx#do_action('open', 'pedit')
-    nnoremap <silent><buffer><expr> K
-                \ defx#do_action('new_directory')
-    nnoremap <silent><buffer><expr> N
-                \ defx#do_action('new_file')
-    nnoremap <silent><buffer><expr> d
-                \ defx#do_action('remove')
-    nnoremap <silent><buffer><expr> r
-                \ defx#do_action('rename')
-    nnoremap <silent><buffer><expr> x
-                \ defx#do_action('execute_system')
-    nnoremap <silent><buffer><expr> .
-                \ defx#do_action('toggle_ignored_files')
-    nnoremap <silent><buffer><expr> h
-                \ defx#do_action('cd', ['..'])
-    nnoremap <silent><buffer><expr> ~
-                \ defx#do_action('cd')
-    nnoremap <silent><buffer><expr> q
-                \ defx#do_action('quit') . ':bd' . "\<cr>"
-    nnoremap <silent><buffer><expr> <Space>
-                \ defx#do_action('toggle_select') . 'j'
-    nnoremap <silent><buffer><expr> *
-                \ defx#do_action('toggle_select_all')
-    nnoremap <silent><buffer><expr> j
-                \ line('.') == line('$') ? 'gg' : 'j'
-    nnoremap <silent><buffer><expr> k
-                \ line('.') == 1 ? 'G' : 'k'
-    nnoremap <silent><buffer><expr> <C-l>
-                \ defx#do_action('redraw')
-    nnoremap <silent><buffer><expr> <C-g>
-                \ defx#do_action('print')
-endfunction
+" nerdtree relations
+let g:NERDTreeShowLineNumbers=1                
+let g:NERDTreeWinPos="left"                    
+let g:NERDTreeWinSize=30                       
+let g:NERDTreeMinimalUI=1                      
+let g:NERDTreeDirArrows=1   "dir arrow: 1-arrow  0-'+-|'
+let g:NERDTreeAutoCenter=1                     
+let NERDTreeShowHidden=1                       
+let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
+let NERDTreeRespectWildIgnore = 1
+let NERDTreeShowBookmarks=1
 
+"  vim-nerdtree-tabs.vim
+let g:nerdtree_tabs_open_on_console_startup=1
+" always focus file window after startup
+let g:nerdtree_tabs_smart_startup_focus=2   
+let g:nerdtree_tabs_autoclose = 1           
+"let g:nerdtree_tabs_focus_on_files=1       
+"let g:nerdtree_tabs_autofind=1             
+nnoremap <silent><F2> :NERDTreeTabsToggle<cr>
+
+" nerdtree-git-plugin.vim                   
+let g:NERDTreeShowGitStatus = 0
+let g:NERDTreeIndicatorMapCustom = {
+			\ "Modified"  : "✹",
+			\ "Staged"    : "✚",
+			\ "Untracked" : "✭",
+			\ "Renamed"   : "➜",
+			\ "Unmerged"  : "═",
+			\ "Deleted"   : "✖",
+			\ "Dirty"     : "✗",
+			\ "Clean"     : "✔︎",
+			\ "Unknown"   : "?"
+			\ }
 
 " choosewin
 " invoke with '-'
