@@ -87,40 +87,9 @@ endif
 
 " open file at last postion
 autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line("$") |
-    \   exe "normal! g`\"" |
-    \ endif
-
-" create file settings
-autocmd BufNewFile *.cpp,*.cc,*.c,*.hpp,*.h,*.sh,*.py exec ":call SetTitle()"
-func SetTitle()
-	if expand("%:e") == 'sh'
-		call setline(1,"\#!/bin/bash")
-		call append(line("."), "")
-"    elseif expand("%:e") == 'py'
-"       call setline(1,"#!/usr/bin/env python3")
-"       call append(line("."),"# coding=utf-8")
-"		call append(line(".")+1, "")
-"    elseif expand("%:e") == 'cpp'
-"		call setline(1,"#include <iostream>")
-"		call append(line("."), "")
-"    elseif expand("%:e") == 'cc'
-"		call setline(1,"#include <iostream>")
-"		call append(line("."), "")
-"    elseif expand("%:e") == 'c'
-"		call setline(1,"#include <stdio.h>")
-"		call append(line("."), "")
-    elseif expand("%:e") == 'h'
-		call setline(1, "#ifndef _".toupper(expand("%:r"))."_H")
-		call setline(2, "#define _".toupper(expand("%:r"))."_H")
-		call setline(3, "#endif")
-    elseif expand("%:e") == 'hpp'
-		call setline(1, "#ifndef _".toupper(expand("%:r"))."_H")
-		call setline(2, "#define _".toupper(expand("%:r"))."_H")
-		call setline(3, "#endif")
-	endif
-endfunc
-autocmd BufNewFile * normal G
+            \ if line("'\"") > 1 && line("'\"") <= line("$") |
+            \   exe "normal! g`\"" |
+            \ endif
 
 if has('persistent_undo')      "check if your vim version supports it
     if !isdirectory(glob('~/.vim/undo'))
@@ -129,19 +98,6 @@ if has('persistent_undo')      "check if your vim version supports it
     set undofile                 "turn on the feature
     set undodir=$HOME/.vim/undo  "directory where the undo files will be stored
 endif
-
-" some function definition:
-
-" show function names in command line
-fun! ShowFuncName()
-	let lnum = line(".")
-	let col = col(".")
-	echohl ModeMsg
-	echo getline(search("^[^ \t#/]\\{2}.*[^:]\s*$", 'bW'))
-	echohl None
-	call search("\\%" . lnum . "l" . "\\%" . col . "c")
-endfun
-" map \ :call ShowFuncName()<CR>
 
 " SHORTCUT SETTINGS:
 " Set mapleader
@@ -154,16 +110,12 @@ vnoremap <space> :
 " Switching between buffers.
 " switch to normal
 inoremap jk <Esc>
-nnoremap <C-down>  <C-W>j
-nnoremap <C-up>  <C-W>k
-nnoremap <C-left>  <C-W>h
-nnoremap <C-right>  <C-W>l
 
 " start vim-plug
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Specify a directory for plugins
@@ -215,30 +167,6 @@ Plug 'iamcco/markdown-preview.vim', {'for': 'markdown'}
 Plug 'mzlogin/vim-markdown-toc', {'for': 'markdown'}
 Plug 'lvht/tagbar-markdown'
 
-" js
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
-Plug 'Galooshi/vim-import-js', {'do': 'npm install -g import-js'}
-Plug 'heavenshell/vim-jsdoc', {'on': 'JsDoc'}
-Plug 'maksimr/vim-jsbeautify', {'for': 'javascript'}
-Plug 'mmalecki/vim-node.js', {'for': 'javascript'}
-Plug 'moll/vim-node', {'for': 'javascript'}
-Plug 'neoclide/vim-jsx-improve', {'for': 'javascript'}
-Plug 'othree/es.next.syntax.vim', {'for': 'javascript'}
-Plug 'othree/javascript-libraries-syntax.vim', {'for': ['javascript', 'coffee', 'ls', 'typescript']}
-
-" html
-Plug 'groenewege/vim-less', {'for': 'less'}
-Plug 'cakebaker/scss-syntax.vim', {'for': ['css', 'scss', 'sass']}
-Plug 'hail2u/vim-css3-syntax', { 'for' : ['css','scss','sass']}
-Plug 'ap/vim-css-color', { 'for' : ['css','scss','sass','less','styl']}
-Plug 'othree/html5.vim', { 'for' : 'html'}
-Plug 'wavded/vim-stylus', { 'for' : 'stylus'}
-Plug 'mattn/emmet-vim', { 'on' : 'EmmetInstall'}
-
-" java
-Plug 'vim-jp/vim-java', { 'for' : 'java'}
-Plug 'artur-shaik/vim-javacomplete2', { 'for' : ['java', 'jsp']}
-
 " viml
 Plug 'Shougo/neco-vim'
 
@@ -264,7 +192,6 @@ colorscheme onedark
 
 " fly grep
 nnoremap fg :FlyGrep<CR>
-" nnoremap ff :call GrepCword()
 
 " echodoc
 let g:echodoc#enable_at_startup = 1
@@ -322,76 +249,6 @@ let g:pydocstring_enable_comment = 0
 " Note: this value is overridden if you explicitly create a
 " mapping in your vimrc, such as if you do:
 let g:pydocstring_enable_mapping = 0
-
-" <html>
-let g:user_emmet_leader_key=get(g:, 'user_emmet_leader_key', '<C-e>')
-augroup lang_html
-    autocmd!
-    autocmd FileType html,css,scss,sass,less,javascript,jsp,vue,eex call s:install_emmet()
-    autocmd Filetype html setlocal omnifunc=htmlcomplete#CompleteTags
-augroup END
-function! s:install_emmet() abort
-  try
-    EmmetInstall
-  catch
-  endtry
-endfunction
-
-" <java>
-augroup lang_java
-    au!
-    autocmd FileType java nnoremap <F7> :AsyncRun -raw javac %; java %:r<CR>
-    autocmd FileType java setlocal omnifunc=javacomplete#Complete
-    autocmd FileType java call s:java_mappings()
-augroup END
-
-function! s:java_mappings() abort
-    inoremap <silent> <buffer> <leader>UU <esc>bgUwea
-    inoremap <silent> <buffer> <leader>uu <esc>bguwea
-    inoremap <silent> <buffer> <leader>ua <esc>bgulea
-    inoremap <silent> <buffer> <leader>Ua <esc>bgUlea
-    nmap <silent><buffer> <F4> <Plug>(JavaComplete-Imports-Add)
-    imap <silent><buffer> <F4> <Plug>(JavaComplete-Imports-Add)
-
-    imap <silent><buffer> <C-j>I <Plug>(JavaComplete-Imports-AddMissing)
-    imap <silent><buffer> <C-j>R <Plug>(JavaComplete-Imports-RemoveUnused)
-    imap <silent><buffer> <C-j>i <Plug>(JavaComplete-Imports-AddSmart)
-    imap <silent><buffer> <C-j>s <Plug>(JavaComplete-Generate-AccessorSetter)
-    imap <silent><buffer> <C-j>g <Plug>(JavaComplete-Generate-AccessorGetter)
-    imap <silent><buffer> <C-j>a <Plug>(JavaComplete-Generate-AccessorSetterGetter)
-    imap <silent><buffer> <C-j>jM <Plug>(JavaComplete-Generate-AbstractMethods)
-endfunction
-
-" <javascript>
-let g:javascript_plugin_jsdoc = 1
-let g:javascript_plugin_flow = 1
-
-augroup lang_js
-    au!
-    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-    autocmd FileType javascript call s:js_mappings()
-augroup END
-
-function! s:js_mappings() abort
-    nnoremap <silent><buffer> <F4> :ImportJSWord<CR>
-    nnoremap <silent><buffer> <Leader>ji :ImportJSWord<CR>
-    nnoremap <silent><buffer> <Leader>jf :ImportJSFix<CR>
-    nnoremap <silent><buffer> <Leader>jg :ImportJSGoto<CR>
-
-    inoremap <silent><buffer> <F4> <Esc>:ImportJSWord<CR>a
-    inoremap <silent><buffer> <C-j>i <Esc>:ImportJSWord<CR>a
-    inoremap <silent><buffer> <C-j>f <Esc>:ImportJSFix<CR>a
-    inoremap <silent><buffer> <C-j>g <Esc>:ImportJSGoto<CR>a
-
-    " Allow prompt for interactive input.
-    let g:jsdoc_allow_input_prompt = 1
-    " Prompt for a function description
-    let g:jsdoc_input_description = 1
-    " Set value to 1 to turn on detecting underscore starting functions as private convention
-    let g:jsdoc_underscore_private = 1
-    " Enable to use ECMAScript6's Shorthand function, Arrow function.
-    let g:jsdoc_enable_es6 = 1
-endfunction
 
 " asyncrun
 let g:asyncrun_open = 6
@@ -673,16 +530,16 @@ nnoremap <silent><F2> :NERDTreeTabsToggle<cr>
 " nerdtree-git-plugin.vim                   
 let g:NERDTreeShowGitStatus = 0
 let g:NERDTreeIndicatorMapCustom = {
-			\ "Modified"  : "✹",
-			\ "Staged"    : "✚",
-			\ "Untracked" : "✭",
-			\ "Renamed"   : "➜",
-			\ "Unmerged"  : "═",
-			\ "Deleted"   : "✖",
-			\ "Dirty"     : "✗",
-			\ "Clean"     : "✔︎",
-			\ "Unknown"   : "?"
-			\ }
+            \ "Modified"  : "✹",
+            \ "Staged"    : "✚",
+            \ "Untracked" : "✭",
+            \ "Renamed"   : "➜",
+            \ "Unmerged"  : "═",
+            \ "Deleted"   : "✖",
+            \ "Dirty"     : "✗",
+            \ "Clean"     : "✔︎",
+            \ "Unknown"   : "?"
+            \ }
 
 " choosewin
 " invoke with '-'
@@ -849,28 +706,3 @@ nmap cM :%s/\r$//g<CR>:noh<CR>
 
 " delete SPACE at the end of line
 nmap cm :%s/\s\+$//<CR>:noh<CR>
-
-"highlight MyGroup ctermbg=brown guibg=brown
-"au BufWinEnter * let w:m2=matchadd('MyGroup', '\%>' . 80 . 'v.\+', -1)
-
-" Highlight unwanted spaces
-" highlight ExtraWhitespace ctermbg=red guibg=red
-"autocmd BufWinEnter * match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/
-
-" Highlight variable under cursor in Vim
-let g:HlUnderCursor=0
-let g:no_highlight_group_for_current_word=["Statement", "Comment", "Type", "PreProc"]
-function HighlightWordUnderCursor()
-	let l:syntaxgroup = synIDattr(synIDtrans(synID(line("."), stridx(getline("."), expand('<cword>')) + 1, 1)), "name")
-
-	if (index(g:no_highlight_group_for_current_word, l:syntaxgroup) == -1)
-		"exe printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\'))
-		exe exists("g:HlUnderCursor")?g:HlUnderCursor?printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\')):'match none':""
-	else
-		"exe 'match IncSearch /\V\<\>/'
-		exe 'match ExtraWhitespace /\s\+$\| \+\ze\t\+\|\t\+\zs \+/'
-	endif
-endfunction
-" map <leader>\ :call HighlightWordUnderCursor()<CR>
-" define a shortcut key for enabling/disabling highlighting:
-" nnoremap  <C-\> :exe "let g:HlUnderCursor=exists(\"g:HlUnderCursor\")?g:HlUnderCursor*-1+1:1"<CR>
