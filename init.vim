@@ -208,8 +208,7 @@ let g:gen_tags#blacklist += split(glob('~/.vim/*'))
 
 " let g:gen_tags#verbose = 1
 nmap <leader>gg :GenGTAGS<cr>
-nmap <leader>cg :ClearGTAGS!<cr>
-autocmd User GenTags#GtagsLoaded nnoremap <leader>gd <c-]>
+nmap <leader>gc :ClearGTAGS!<cr>
 """ short cuts:
 "  Ctrl+\ c    Find functions calling this function
 "  Ctrl+\ d    Find functions called by this function
@@ -348,6 +347,7 @@ let g:Lf_NormalMap = {
             \ "Buffer": [["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<CR>']],
             \ "Mru":    [["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<CR>']],
             \ "Tag":    [["<ESC>", ':exec g:Lf_py "tagExplManager.quit()"<CR>']],
+            \ "BufTag":    [["<ESC>", ':exec g:Lf_py "buftagExplManager.quit()"<CR>']],
             \ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
             \ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
             \ }
@@ -358,6 +358,7 @@ let g:Lf_WildIgnore = {
 noremap <leader>m :LeaderfMru<cr>
 " noremap <leader>f :LeaderfFile<cr>
 noremap <leader>c :LeaderfFunction!<cr>
+noremap <leader>v :LeaderfBufTag!<cr>
 " noremap <leader>b :LeaderfBuffer<cr>
 " noremap <leader>t :LeaderfTag<cr>
 noremap <leader>o :LeaderfColorscheme<cr>
