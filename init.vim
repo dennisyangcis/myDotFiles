@@ -621,7 +621,7 @@ function! EnterInsert()
         return "\<C-g>u\<CR>"
     endif
 endfunction
-imap <silent><expr><CR> EnterInsert()
+" imap <silent><expr><CR> EnterInsert()
 
 inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
 inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
