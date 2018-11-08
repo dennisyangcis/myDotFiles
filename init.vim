@@ -127,7 +127,6 @@ Plug 'tyru/open-browser.vim', {'on': ['OpenBrowserSmartSearch', 'OpenBrowser', '
 Plug 'jsfaint/gen_tags.vim'
 Plug 'wsdjeg/FlyGrep.vim'
 Plug 'tenfyzhong/CompleteParameter.vim'
-Plug 'w0rp/ale'
 
 " utils
 Plug 'junegunn/vim-easy-align'
@@ -146,17 +145,12 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'Shougo/echodoc.vim'
 
 " code completion
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Shougo/neoinclude.vim'
-" c
-" Plug 'Shougo/deoplete-clangx'
-Plug 'zchee/deoplete-clang'
-Plug 'arakashic/chromatica.nvim'
-" python
-Plug 'zchee/deoplete-jedi', {'for': 'python'}
-Plug 'heavenshell/vim-pydocstring', { 'for': 'python'}
-Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python'}
-Plug 'tell-k/vim-autoflake'
 
 " markdown
 Plug 'joker1007/vim-markdown-quote-syntax', {'for': 'markdown'}
@@ -229,83 +223,31 @@ let g:deoplete#enable_refresh_always = 1
 let g:deoplete#max_abbr_width = 0
 let g:deoplete#max_menu_width = 0
 " autocmd CompleteDone * silent! pclose!
+let g:LanguageClient_serverCommands = {
+    \ 'python': ['~/Library/Python/3.7/bin/pyls'],
+    \ 'c': ['ccls'],
+    \ 'cpp': ['ccls'],
+    \ }
+let g:LanguageClient_selectionUI = 'quickfix'
 
-" <c>
-let b:neoinclude_paths = '.,/usr/include,,'
+nnoremap <silent> Km :call LanguageClient_contextMenu()<CR>
+" Or map each action separately
+nnoremap <silent> Kd :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+
 
 " <python>
 augroup lang_python
     au!
     autocmd FileType python nnoremap <F7> :AsyncRun -raw python3 %<CR>
 augroup END
-let g:jedi#completions_enabled = 0
-" If you execute :Pydocstring at no `def`, `class` line.
-" g:pydocstring_enable_comment enable to put comment.txt value.
-let g:pydocstring_enable_comment = 0
-
-" Disable this option to prevent pydocstring from creating any
-" key mapping to the `:Pydocstring` command.
-" Note: this value is overridden if you explicitly create a
-" mapping in your vimrc, such as if you do:
-let g:pydocstring_enable_mapping = 0
 
 " asyncrun
 let g:asyncrun_open = 6
 let g:asyncrun_bell = 1
 nnoremap <silent> <F8> :call asyncrun#quickfix_toggle(6)<CR>
 let g:asyncrun_rootmarks = ['.svn', '.git', '.root'] 
-
-" syntax check
-let g:ale_linters_explicit = 1
-let g:ale_completion_delay = 500
-let g:ale_echo_delay = 20
-let g:ale_lint_delay = 500
-let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
-let g:ale_c_cppcheck_options = ''
-let g:ale_cpp_cppcheck_options = ''
-let g:ale_linters = {
-            \   'bash': ['shell'],
-            \   'sh': ['shell'],
-            \   'help': [],
-            \   'python': ['flake8', 'autoflake', 'yapf', 'isort'],
-            \   'spec': [],
-            \   'text': [],
-            \   'zsh': ['shell'],
-            \   'c': ['cppcheck', 'gcc', 'clang'],
-            \   'javascript': ['eslint'],
-            \   'markdown': ['markdownlint'],
-            \   'html': ['tidy'],
-            \   'java': ['javac'],
-            \}
-function! AleCount()
-    let bn = bufnr('%')
-    let num = ale#statusline#Count(bn)
-    if num['total'] > 1000
-        exe "ALEDisableBuffer"
-    endif
-endfunction
-augroup DisableAle
-    autocmd!
-    autocmd User ALELintPost  call AleCount()
-augroup END
-
-nmap <silent> <leader>z <Plug>(ale_previous_wrap)
-nmap <silent> <leader>x <Plug>(ale_next_wrap)
-
-" c-family color
-let g:chromatica#enable_at_startup=1
-let g:chromatica#responsive_mode = 1
-let g:chromatica#libclang_path = g:clang_path
-
-let g:deoplete#sources#clang#libclang_path = g:clang_path
-let g:deoplete#sources#clang#clang_header = g:clang_header
-
-" pep8 indent
-let g:python_pep8_indent_multiline_string = -1
 
 " markdown
 " let g:vim_markdown_autowrite = 1
@@ -434,7 +376,7 @@ augroup Plugin_CompleteParameter_augroup
     autocmd FileType * call Plugin_CompleteParameter_setting()
 augroup END
 let g:complete_parameter_use_ultisnips_mapping = 1
-" let g:complete_parameter_log_level = 1
+
 " alrLine Config
 let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
@@ -673,10 +615,10 @@ hi StartifySpecial ctermfg=240
 function! EnterInsert()
     if pumvisible()
         return "\<C-y>" . cmp#pre_complete("") . "\<C-y>"
-    elseif getline('.')[col('.') - 2]==#'{'&&getline('.')[col('.')-1]==#'}'
-        return "\<Enter>\<esc>ko"
+    " elseif getline('.')[col('.') - 2]==#'{'&&getline('.')[col('.')-1]==#'}'
+    "     return "\<Enter>\<esc>ko"
     else
-        return "\<Enter>"
+        return "\<C-g>u\<CR>"
     endif
 endfunction
 imap <silent><expr><CR> EnterInsert()
