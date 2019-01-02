@@ -184,7 +184,9 @@ call plug#end()
 " setup end
 
 " PLUGIN SETTINGS
-colorscheme onedark
+if $TERM == "xterm"
+    colorscheme onedark
+endif
 
 " fly grep
 nnoremap fg :FlyGrep<CR>
@@ -196,7 +198,7 @@ let g:echodoc#enable_at_startup = 1
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
-nnoremap <silent><Esc><Esc> :<C-u>nohlsearch<CR>
+nnoremap <Esc><Esc> :<C-u>nohlsearch<CR>
 set hlsearch
 let g:incsearch#auto_nohlsearch = 1
 map n  <Plug>(incsearch-nohl-n)
@@ -205,29 +207,6 @@ map *  <Plug>(incsearch-nohl-*)
 map #  <Plug>(incsearch-nohl-#)
 map g* <Plug>(incsearch-nohl-g*)
 map g# <Plug>(incsearch-nohl-g#)
-
-" tags
-" let $GTAGSLABEL = 'native-pygments'
-" let $GTAGSLIBPATH='/usr/include/'
-" let g:gen_tags#gtags_auto_gen = 1
-" let g:loaded_gentags#gtags = 0
-" let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
-" let g:gen_tags#ctags_auto_gen = 0
-" let g:gen_tags#blacklist = split(glob('~/.vim/plugged/*'))
-" let g:gen_tags#blacklist += split(glob('~/.vim/*'))
-"
-" nmap <leader>gg :GenGTAGS<cr>
-" nmap <leader>gc :ClearGTAGS!<cr>
-""" short cuts:
-"  Ctrl+\ c    Find functions calling this function
-"  Ctrl+\ d    Find functions called by this function
-"  Ctrl+\ e    Find this egrep pattern
-"  Ctrl+\ f    Find this file
-"  Ctrl+\ g    Find this definition
-"  Ctrl+\ i    Find files #including this file
-"  Ctrl+\ s    Find this C symbol
-"  Ctrl+\ t    Find this text string
-"""
 
 " code completion
 let g:deoplete#enable_at_startup = 1
@@ -529,7 +508,7 @@ let g:choosewin_statusline_replace = 0 " don't replace statusline
 let g:choosewin_tabline_replace    = 0 " don't replace tabline
 
 " tagbar config
-let g:tagbar_width=30
+let g:tagbar_width=35
 " let g:tagbar_autoclose=1
 let g:tagbar_autofocus=1
 let g:tagbar_sort=0
