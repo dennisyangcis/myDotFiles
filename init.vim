@@ -23,6 +23,7 @@ set foldlevel=128
 set helpheight=10
 set helplang=cn
 set hidden
+set signcolumn=yes
 set ignorecase
 set mouse=v
 set number
@@ -124,7 +125,7 @@ call plug#begin('~/.vim/plugged')
 " core
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'tyru/open-browser.vim', {'on': ['OpenBrowserSmartSearch', 'OpenBrowser', 'OpenBrowserSearch']}
-Plug 'jsfaint/gen_tags.vim'
+" Plug 'jsfaint/gen_tags.vim'
 Plug 'wsdjeg/FlyGrep.vim'
 Plug 'tenfyzhong/CompleteParameter.vim'
 
@@ -169,8 +170,9 @@ Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeTabsToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeTabsToggle' }
 Plug 'jistr/vim-nerdtree-tabs', { 'on': 'NERDTreeTabsToggle' }
 Plug 'Yggdroot/indentLine'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'itchyny/lightline.vim'
+" Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
 Plug 'majutsushi/tagbar',{ 'on': 'TagbarToggle' }
 Plug 'tenfyzhong/tagbar-makefile.vim'
 Plug 't9md/vim-choosewin'
@@ -190,19 +192,32 @@ nnoremap fg :FlyGrep<CR>
 " echodoc
 let g:echodoc#enable_at_startup = 1
 
-" tags
-let $GTAGSLABEL = 'native-pygments'
-let $GTAGSLIBPATH='/usr/include/'
-let g:gen_tags#gtags_auto_gen = 1
-let g:loaded_gentags#gtags = 0
-let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
-let g:gen_tags#ctags_auto_gen = 0
-let g:gen_tags#blacklist = split(glob('~/.vim/plugged/*'))
-let g:gen_tags#blacklist += split(glob('~/.vim/*'))
+" incsearch config
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+nnoremap <silent><Esc><Esc> :<C-u>nohlsearch<CR>
+set hlsearch
+let g:incsearch#auto_nohlsearch = 1
+map n  <Plug>(incsearch-nohl-n)
+map N  <Plug>(incsearch-nohl-N)
+map *  <Plug>(incsearch-nohl-*)
+map #  <Plug>(incsearch-nohl-#)
+map g* <Plug>(incsearch-nohl-g*)
+map g# <Plug>(incsearch-nohl-g#)
 
-" let g:gen_tags#verbose = 1
-nmap <leader>gg :GenGTAGS<cr>
-nmap <leader>gc :ClearGTAGS!<cr>
+" tags
+" let $GTAGSLABEL = 'native-pygments'
+" let $GTAGSLIBPATH='/usr/include/'
+" let g:gen_tags#gtags_auto_gen = 1
+" let g:loaded_gentags#gtags = 0
+" let g:loaded_gentags#ctags = 1  " disable ctags support, use gtags only
+" let g:gen_tags#ctags_auto_gen = 0
+" let g:gen_tags#blacklist = split(glob('~/.vim/plugged/*'))
+" let g:gen_tags#blacklist += split(glob('~/.vim/*'))
+"
+" nmap <leader>gg :GenGTAGS<cr>
+" nmap <leader>gc :ClearGTAGS!<cr>
 """ short cuts:
 "  Ctrl+\ c    Find functions calling this function
 "  Ctrl+\ d    Find functions called by this function
@@ -222,18 +237,24 @@ let g:deoplete#enable_camel_case = 1
 let g:deoplete#enable_refresh_always = 1
 let g:deoplete#max_abbr_width = 0
 let g:deoplete#max_menu_width = 0
+set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
+
 " autocmd CompleteDone * silent! pclose!
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
+
 let g:LanguageClient_serverCommands = {
-    \ 'python': ['~/Library/Python/3.7/bin/pyls'],
+    \ 'python': ['~/.local/bin/pyls'],
     \ 'c': ['ccls'],
     \ 'cpp': ['ccls'],
     \ }
 let g:LanguageClient_selectionUI = 'quickfix'
 
-nnoremap <silent> Km :call LanguageClient_contextMenu()<CR>
+noremap <silent> <F9> :call LanguageClient_contextMenu()<CR>
 " Or map each action separately
 nnoremap <silent> Kd :call LanguageClient#textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> gr :call LanguageClient#textDocument_references()<CR>
 " nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 
@@ -247,7 +268,7 @@ augroup END
 let g:asyncrun_open = 6
 let g:asyncrun_bell = 1
 nnoremap <silent> <F8> :call asyncrun#quickfix_toggle(6)<CR>
-let g:asyncrun_rootmarks = ['.svn', '.git', '.root'] 
+let g:asyncrun_rootmarks = ['.svn', '.git', '.root']
 
 " markdown
 " let g:vim_markdown_autowrite = 1
@@ -377,86 +398,89 @@ augroup Plugin_CompleteParameter_augroup
 augroup END
 let g:complete_parameter_use_ultisnips_mapping = 1
 
-" alrLine Config
-let g:airline_theme='onedark'
-let g:airline_powerline_fonts = 1
-let g:airline_skip_empty_sections = 1
-" tabline
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#show_splits = 1
-" let g:airline#extensions#tabline#show_buffers = 1
-let g:airline#extensions#tabline#show_tab_nr = 1
-let g:airline#extensions#tabline#buffer_nr_show = 0
-let g:airline#extensions#tabline#tab_nr_type = 2 " splits and tab number
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-let g:airline#extensions#tabline#buffer_nr_format = '%s:'
-let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline#extensions#tabline#fnamecollapse = 2
-let g:airline#extensions#tabline#fnametruncate = 16
-let g:airline#extensions#tabline#formatter = 'default'
-" buffer select
-noremap <silent><leader>d :bp<bar>sp<bar>bn<bar>bd!<CR>
-nmap <silent><leader>1 <Plug>AirlineSelectTab1
-nmap <silent><leader>2 <Plug>AirlineSelectTab2
-nmap <silent><leader>3 <Plug>AirlineSelectTab3
-nmap <silent><leader>4 <Plug>AirlineSelectTab4
-nmap <silent><leader>5 <Plug>AirlineSelectTab5
-nmap <silent><leader>6 <Plug>AirlineSelectTab6
-nmap <silent><leader>7 <Plug>AirlineSelectTab7
-nmap <silent><leader>8 <Plug>AirlineSelectTab8
-nmap <silent><leader>9 <Plug>AirlineSelectTab9
-" ale
-let g:airline#extensions#ale#enabled = 1
-let airline#extensions#ale#error_symbol = 'E:'
-let airline#extensions#ale#warning_symbol = 'W:'
-let airline#extensions#ale#show_line_numbers = 1
-let airline#extensions#ale#open_lnum_symbol = '(L'
-let airline#extensions#ale#close_lnum_symbol = ')'
-" virtualenv for python
-let g:airline#extensions#virtualenv#enabled = 1
+" lightline Config
+let g:lightline = {
+            \ 'colorscheme': 'one',
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+            \   'right': [ [ 'lineinfo' ], [ 'percent' ], [ 'fileformat', 'fileencoding', 'filetype' ] ]
+            \ },
+            \ 'component_function': {
+            \   'fugitive': 'LightlineFugitive',
+            \   'filename': 'LightlineFilename',
+            \   'fileformat': 'LightlineFileformat',
+            \   'filetype': 'LightlineFiletype',
+            \   'fileencoding': 'LightlineFileencoding',
+            \   'mode': 'LightlineMode',
+            \ },
+            \ 'subseparator': { 'left': '|', 'right': '|' }
+            \ }
 
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-let g:airline#extensions#tabline#buffer_idx_format = {
-            \ '0': '0 ',
-            \ '1': '1 ',
-            \ '2': '2 ',
-            \ '3': '3 ',
-            \ '4': '4 ',
-            \ '5': '5 ',
-            \ '6': '6 ',
-            \ '7': '7 ',
-            \ '8': '8 ',
-            \ '9': '9 '
-            \}
-" tabline symbol
-let g:airline#extensions#tabline#left_sep = ''
-let g:airline#extensions#tabline#right_sep = ''
-" powerline symbols
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.redonly = ''
-let g:airline_symbols.linenr = '☰'
-let g:airline_symbols.maxlinenr = ''
-" tagbar integration
-let g:airline#extensions#tagbar#enabled = 1
-let g:airline#extensions#tagbar#flags = ''
-let g:airline#extensions#tagbar#flags = 'f'
-let g:airline#extensions#tagbar#flags = 's'
-let g:airline#extensions#tagbar#flags = 'p'
+function! LightlineModified()
+    return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
+
+function! LightlineReadonly()
+    return &ft !~? 'help' && &readonly ? 'RO' : ''
+endfunction
+
+function! LightlineFilename()
+    let fname = expand('%:t')
+    return fname =~ '__Tagbar__' ? g:lightline.fname :
+                \ fname =~ '__Gundo\|NERD_tree' ? '' :
+                \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+                \ ('' != fname ? fname : '[No Name]') .
+                \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+endfunction
+
+function! LightlineFugitive()
+    try
+        if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && exists('*fugitive#head')
+            let mark = ''  " edit here for cool mark
+            let branch = fugitive#head()
+            return branch !=# '' ? mark.branch : ''
+        endif
+    catch
+    endtry
+    return ''
+endfunction
+
+function! LightlineFileformat()
+    return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightlineFiletype()
+    return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightlineFileencoding()
+    return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+endfunction
+
+function! LightlineMode()
+    let fname = expand('%:t')
+    return fname == '__Tagbar__' ? 'Tagbar' :
+                \ fname == '__Gundo__' ? 'Gundo' :
+                \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+                \ fname =~ 'NERD_tree' ? 'NERDTree' :
+                \ winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+let g:tagbar_status_func = 'TagbarStatusFunc'
+
+function! TagbarStatusFunc(current, sort, fname, ...) abort
+    let g:lightline.fname = a:fname
+    return lightline#statusline(0)
+endfunction
 
 " nerdtree relations
-let g:NERDTreeShowLineNumbers=1                
-let g:NERDTreeWinPos="left"                    
-let g:NERDTreeWinSize=30                       
-let g:NERDTreeMinimalUI=1                      
+let g:NERDTreeShowLineNumbers=1
+let g:NERDTreeWinPos="left"
+let g:NERDTreeWinSize=40
+let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows=1   "dir arrow: 1-arrow  0-'+-|'
-let g:NERDTreeAutoCenter=1                     
-let NERDTreeShowHidden=1                       
+let g:NERDTreeAutoCenter=1
+let NERDTreeShowHidden=1
 let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
 let NERDTreeRespectWildIgnore = 1
 let NERDTreeShowBookmarks=1
@@ -464,13 +488,13 @@ let NERDTreeShowBookmarks=1
 "  vim-nerdtree-tabs.vim
 let g:nerdtree_tabs_open_on_console_startup=1
 " always focus file window after startup
-let g:nerdtree_tabs_smart_startup_focus=2   
-let g:nerdtree_tabs_autoclose = 1           
-"let g:nerdtree_tabs_focus_on_files=1       
-"let g:nerdtree_tabs_autofind=1             
+let g:nerdtree_tabs_smart_startup_focus=2
+let g:nerdtree_tabs_autoclose = 1
+"let g:nerdtree_tabs_focus_on_files=1
+"let g:nerdtree_tabs_autofind=1
 nnoremap <silent><F2> :NERDTreeTabsToggle<cr>
 
-" nerdtree-git-plugin.vim                   
+" nerdtree-git-plugin.vim
 let g:NERDTreeShowGitStatus = 0
 let g:NERDTreeIndicatorMapCustom = {
             \ "Modified"  : "✹",
