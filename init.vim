@@ -25,7 +25,7 @@ set helplang=cn
 set hidden
 set signcolumn=yes
 set ignorecase
-set mouse=v
+set mouse=nvic
 set number
 set pumheight=10
 set ruler
@@ -56,21 +56,21 @@ set noshowmode
 " global ignore
 set wildignore=
 "common
-set wildignore+=*/.svn/*,*/.git/*,*/.hg/*
+set wildignore+=*/.svn,*/.git,*/.hg
 set wildignore+=tags,.vim_tags
 set wildignore+=.tags
 set wildignore+=*.swp
 " tmp dir
-set wildignore+=*/_cache/*,*/.cache/*
-set wildignore+=*/_tmp/*,*/.tmp/*
+set wildignore+=*/_cache,*/.cache
+set wildignore+=*/_tmp,*/.tmp
 " build dir
 " set wildignore+=*/_release/*,*/.release/*
 " set wildignore+=*/build/*,*/build-*/*
-set wildignore+=*/_repo/*
+set wildignore+=*/_repo
 " c/cpp
-set wildignore+=*/.so/*,*/.o/*,*/.obj/*,*/.class/*
+set wildignore+=*/*.so,*/*.o,*/*.obj,*/*.class
 " py
-set wildignore+=*/.pyc/*,*/.pyo/*
+set wildignore+=*/*.pyc,*/*.pyo,*/__pycache__
 
 set wildmode=list:longest,full
 set wrap
@@ -78,11 +78,9 @@ set t_Co=256
 
 if has('unix')
     if !has('mac')
-        let g:clang_path = '/usr/lib/llvm-6.0/lib/libclang.so'
-        let g:clang_header = '/usr/lib/clang/6.0'
+        let g:pyls_path = '~/.local/bin/pyls'
     else
-        let g:clang_path = '/Library/Developer/CommandLineTools/usr/lib/libclang.dylib'
-        let g:clang_header = '/Library/Developer/CommandLineTools/usr/lib/clang'
+        let g:pyls_path = '~/Library/Python/3.7/bin/pyls'
     endif
 endif
 
@@ -125,8 +123,6 @@ call plug#begin('~/.vim/plugged')
 " core
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 Plug 'tyru/open-browser.vim', {'on': ['OpenBrowserSmartSearch', 'OpenBrowser', 'OpenBrowserSearch']}
-" Plug 'jsfaint/gen_tags.vim'
-Plug 'wsdjeg/FlyGrep.vim'
 Plug 'tenfyzhong/CompleteParameter.vim'
 
 " utils
@@ -171,8 +167,6 @@ Plug 'Xuyuanp/nerdtree-git-plugin', { 'on': 'NERDTreeTabsToggle' }
 Plug 'jistr/vim-nerdtree-tabs', { 'on': 'NERDTreeTabsToggle' }
 Plug 'Yggdroot/indentLine'
 Plug 'itchyny/lightline.vim'
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
 Plug 'majutsushi/tagbar',{ 'on': 'TagbarToggle' }
 Plug 'tenfyzhong/tagbar-makefile.vim'
 Plug 't9md/vim-choosewin'
@@ -184,12 +178,9 @@ call plug#end()
 " setup end
 
 " PLUGIN SETTINGS
-if $TERM == "xterm"
+if $TERM == "xterm" || $TERM == "xterm-256color"
     colorscheme onedark
 endif
-
-" fly grep
-nnoremap fg :FlyGrep<CR>
 
 " echodoc
 let g:echodoc#enable_at_startup = 1
@@ -223,7 +214,7 @@ let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
 
 let g:LanguageClient_serverCommands = {
-    \ 'python': ['~/.local/bin/pyls'],
+    \ 'python': [g:pyls_path],
     \ 'c': ['ccls'],
     \ 'cpp': ['ccls'],
     \ }
@@ -234,8 +225,6 @@ noremap <silent> <F9> :call LanguageClient_contextMenu()<CR>
 nnoremap <silent> Kd :call LanguageClient#textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
 nnoremap <silent> gr :call LanguageClient#textDocument_references()<CR>
-" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
-
 
 " <python>
 augroup lang_python
@@ -460,7 +449,7 @@ let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows=1   "dir arrow: 1-arrow  0-'+-|'
 let g:NERDTreeAutoCenter=1
 let NERDTreeShowHidden=1
-let NERDTreeIgnore=['\.pyc','\~$','\.swp', '\.svn', '\.git']
+let NERDTreeIgnore=['\~$']
 let NERDTreeRespectWildIgnore = 1
 let NERDTreeShowBookmarks=1
 
@@ -624,8 +613,9 @@ function! EnterInsert()
         return "\<C-g>u\<CR>"
     endif
 endfunction
-" imap <silent><expr><CR> EnterInsert()
+imap <silent><expr><CR> EnterInsert()
 
+noremap <silent><leader>d :bp<bar>sp<bar>bn<bar>bd!<CR>
 inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
 inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
 inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
