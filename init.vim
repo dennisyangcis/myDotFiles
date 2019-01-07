@@ -606,11 +606,13 @@ hi StartifySpecial ctermfg=240
 " Enter key binding
 function! EnterInsert()
     if pumvisible()
-        return "\<C-y>" . cmp#pre_complete("") . "\<C-y>"
-    " elseif getline('.')[col('.') - 2]==#'{'&&getline('.')[col('.')-1]==#'}'
-    "     return "\<Enter>\<esc>ko"
+        " return "\<C-y>" . cmp#pre_complete("") . "\<C-y>"
+        return "\<C-y>"
+    elseif getline('.')[col('.') - 2]==#'{'&&getline('.')[col('.')-1]==#'}'
+        return "\<Enter>\<esc>ko"
     else
-        return "\<C-g>u\<CR>"
+        " return "\<C-g>u\<CR>"
+        return "\<Enter>"
     endif
 endfunction
 imap <silent><expr><CR> EnterInsert()
