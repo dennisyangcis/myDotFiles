@@ -210,14 +210,26 @@ let g:deoplete#max_menu_width = 0
 set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
 
 " autocmd CompleteDone * silent! pclose!
+let g:LanguageClient_hasSnippetSupport = 0
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
 
 let g:LanguageClient_serverCommands = {
-    \ 'python': [g:pyls_path],
-    \ 'c': ['ccls'],
-    \ 'cpp': ['ccls'],
-    \ }
+            \ 'python': [g:pyls_path],
+            \ 'c': ['ccls'],
+            \ 'cpp': ['ccls'],
+            \ 'java': ['java',
+            \   '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044',
+            \   '-Declipse.application=org.eclipse.jdt.ls.core.id1',
+            \   '-Dosgi.bundles.defaultStartLevel=4',
+            \   '-Declipse.product=org.eclipse.jdt.ls.core.product',
+            \   '-Dlog.level=ALL', '-Dlog.protocol=true', '-noverify', '-Xmx1G',
+            \   '-jar', '~/code/github/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1.5.200.v20180922-1751.jar',
+            \   '-configuration', '~/code/github/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/config_linux',
+            \   '-data', '~/code'],
+            \ 'go': ['~/go/bin/go-langserver', '-gocodecompletion', '-diagnostics', '-lint-tool', 'golint'],
+            \ 'sh': ['~/.npm-global/bin/bash-language-server', 'start'],
+            \ }
 let g:LanguageClient_selectionUI = 'quickfix'
 
 noremap <silent> <F9> :call LanguageClient_contextMenu()<CR>
@@ -293,6 +305,8 @@ noremap <leader>v :LeaderfBufTag!<cr>
 " noremap <leader>b :LeaderfBuffer<cr>
 " noremap <leader>t :LeaderfTag<cr>
 noremap <leader>o :LeaderfColorscheme<cr>
+nnoremap fg :Leaderf rg<cr>
+nnoremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
 
 " terminal, copy from SPCVim
 let g:pos = 'bottom'
