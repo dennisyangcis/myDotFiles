@@ -226,7 +226,7 @@ let g:LanguageClient_serverCommands = {
             \   '-Dlog.level=ALL', '-Dlog.protocol=true', '-noverify', '-Xmx1G',
             \   '-jar', '~/code/github/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1.5.200.v20180922-1751.jar',
             \   '-configuration', '~/code/github/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/config_linux',
-            \   '-data', '~/code'],
+            \   '-data', '/tmp/jdt_project'],
             \ 'go': ['~/go/bin/go-langserver', '-gocodecompletion', '-diagnostics', '-lint-tool', 'golint'],
             \ 'sh': ['~/.npm-global/bin/bash-language-server', 'start'],
             \ }
