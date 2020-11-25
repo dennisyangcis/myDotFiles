@@ -1,0 +1,13 @@
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set showmode
+set number
+set scrolloff=3
+set history=100000
+
+inoremap jk <Esc>
+
+let mapleader=" "
+set easymotion
