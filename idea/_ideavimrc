@@ -6,8 +6,10 @@ set showmode
 set number
 set scrolloff=3
 set history=100000
+set easymotion
 
 inoremap jk <Esc>
 
-let mapleader=" "
-set easymotion
+let mapleader=' '
+nnoremap <Leader><Leader>s :action AceAction<CR>
+nnoremap gi :action GotoImplementation<CR>
