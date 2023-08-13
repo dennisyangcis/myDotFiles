@@ -51,6 +51,9 @@ nnoremap gt :action GotoTest<CR>
 nnoremap gs :action GotoSuperMethod<CR>
 nnoremap ga :action GotoAction<CR>
 
+nnoremap <Leader>h gT
+nnoremap <Leader>l gt
+
 nnoremap ta :action Annotate<CR>
 nnoremap tb :action ToggleLineBreakpoint<CR>
 nnoremap tm :action ToggleBookmark<CR>
